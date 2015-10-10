@@ -35,16 +35,39 @@ Additional considerations:
 Consider performance, memory usage and assume that your code may be called
 from a multi-threaded environment.
 """
+
+currentBest = np.inf
+currentBestSnake = []
+directions = np.array([[0,1], [1,0], [0,-1], [-1,0]])
+pMapGlobal = None
+target = None
+nOutBufferSizeGlobal = None
+
+
 def FindPath(
     nStartX, nStartY,
     nTargetX, nTargetY,
-    nMapWidth, nMapHeight,
+    pMap, nMapWidth, nMapHeight,
     pOutBuffer, nOutBufferSize
 ):
 
-    # pMap = pMap.reshape(nMapHeight, nMapWidth)
+    pMap = pMap.reshape(nMapHeight, nMapWidth)
+    global pMapGlobal
+    pMapGlobal = pMap
+    global target
+    target = np.array([nTargetY, nTargetX])
+    global nOutBufferSizeGlobal
+    nOutBufferSizeGlobal = nOutBufferSize
+
     snake = [np.array([nStartY, nStartX])]
     forward(snake)
+
+    if np.isinf(currentBest):
+        return -1
+    else:
+        for pos in currentBestSnake[1:]:  # Do not count start position.
+            pOutBuffer.append(pos[0]*nMapWidth + pos[1])
+        return currentBest - 1
 
 
 def forward(snake):
@@ -57,7 +80,7 @@ def forward(snake):
             return
     if len(snake) >= currentBest:  # A better solution has been found already.
         return
-    elif len(snake) > nOutBufferSize:  # Snake is too long.
+    elif len(snake) > nOutBufferSizeGlobal:  # Snake is too long.
         return
     elif (snake[~0] == target).all():  # Victory!
         currentBest = len(snake)
@@ -66,42 +89,5 @@ def forward(snake):
 
     for direction in directions:
         newPos = snake[~0] + direction
-        if pMap[newPos[0], newPos[1]]:  # if open path
+        if pMapGlobal[newPos[0], newPos[1]]:  # if open path
             forward(snake + [newPos])  # continue moving
-
-
-if __name__ == '__main__':
-
-    pOutBuffer = []
-    nOutBufferSize = 100
-    nStartY, nStartX = 1, 1
-    nTargetY, nTargetX = 2, 3
-    nMapWidth, nMapHeight = 10, 10
-    target = np.array([nTargetY, nTargetX])
-    directions = np.array([[0,1], [1,0], [0,-1], [-1,0]])
-    # pMap = pMap.reshape(nMapHeight, nMapWidth)
-    pMap = np.array([
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, ],
-        [0, 1, 0, 1, 1, 1, 1, 1, 0, 0, ],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0, 0, ],
-        [0, 1, 1, 1, 1, 1, 0, 1, 0, 0, ],
-        [0, 1, 0, 0, 0, 1, 1, 1, 0, 0, ],
-        [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, ],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-    ])
-
-    currentBest = np.inf
-    currentBestSnake = None
-
-    FindPath(
-        nStartX, nStartY,
-        nTargetX, nTargetY,
-        nMapWidth, nMapHeight,
-        pOutBuffer, nOutBufferSize
-    )
-
-    print currentBest
-    print currentBestSnake
