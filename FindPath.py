@@ -58,7 +58,8 @@ def FindPath(
 
     pMap = pMap.reshape(nMapHeight, nMapWidth)
     global pMapGlobal
-    pMapGlobal = pMap
+    pMapGlobal = np.zeros((nMapHeight+1, nMapWidth+1))
+    pMapGlobal[:~0, :~0] = pMap
     global target
     target = np.array([nTargetY, nTargetX])
     global nOutBufferSizeGlobal
