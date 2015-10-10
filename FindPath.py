@@ -51,7 +51,7 @@ def FindPath(
     pOutBuffer, nOutBufferSize
 ):
 
-    # pMap = pMap.reshape(nMapHeight, nMapWidth)
+    pMap = pMap.reshape(nMapHeight, nMapWidth)
     global pMapGlobal
     pMapGlobal = pMap
     global target
@@ -65,9 +65,9 @@ def FindPath(
     if np.isinf(currentBest):
         return -1
     else:
-        for pos in currentBestSnake:
-            pOutBuffer.append(pos)
-        return currentBest - 1  # Do not count start position.
+        for pos in currentBestSnake[1:]:  # Do not count start position.
+            pOutBuffer.append(pos[0]*nMapWidth + pos[1])
+        return currentBest - 1
 
 
 def forward(snake):
