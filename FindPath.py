@@ -51,6 +51,11 @@ def FindPath(
     pOutBuffer, nOutBufferSize
 ):
 
+    if isinstance(pMap, basestring):
+        pMap = np.array(list(pMap)).astype(bool)
+    else:
+        pMap = np.array(pMap).astype(bool)
+
     pMap = pMap.reshape(nMapHeight, nMapWidth)
     global pMapGlobal
     pMapGlobal = pMap
