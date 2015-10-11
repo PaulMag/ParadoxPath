@@ -84,8 +84,10 @@ def forward(snake):
     for prevPos in snake[:~0]:
         if (snake[~0] == prevPos).all():  # Been here before.
             return
-    if len(snake) >= currentBest:  # A better solution has been found already.
+    if len(snake) + np.abs(target - snake[~0]).sum() >= currentBest:
+        # A better solution has been found already.
         return
+    # elif np.abs(target - snake[~0]).sum()
     elif len(snake) > nOutBufferSizeGlobal:  # Snake is too long.
         return
     elif (snake[~0] == target).all():  # Victory!
