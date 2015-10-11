@@ -65,7 +65,6 @@ def FindPath(
     nOutBufferSizeGlobal = nOutBufferSize
 
     snake = [np.array([nStartY, nStartX])]
-    set_direction(snake[~0])
     forward(snake)
 
     if np.isinf(currentBest):
@@ -95,12 +94,15 @@ def forward(snake):
         currentBestSnake = list(snake)
         return
 
+    set_direction(snake[~0])
     for direction in directions:
         newPos = snake[~0] + direction
         if pMapGlobal[newPos[0], newPos[1]]:  # if open path
             forward(snake + [newPos])  # continue moving
 
 
+dir1 = np.array([+1,  0,  0,  -1])
+dir2 = np.array([ 0, +1, -1,  +1])
 directions = np.zeros((4, 2))
 
 def set_direction(head):
@@ -110,23 +112,11 @@ def set_direction(head):
     global directions
 
     if direction[i] >= 0:
-        directions[0, i] = +1
-        directions[1, i] =  0
-        directions[2, i] =  0
-        directions[3, i] = -1
+        directions[:, i] = +dir1
     else:
-        directions[0, i] = -1
-        directions[1, i] =  0
-        directions[2, i] =  0
-        directions[3, i] = +1
+        directions[:, i] = -dir1
     if direction[not i] >= 0:
-        directions[0, not i] =  0
-        directions[1, not i] = +1
-        directions[2, not i] = -1
-        directions[3, not i] =  0
+        directions[:, not i] = +dir2
     else:
-        directions[0, not i] =  0
-        directions[1, not i] = -1
-        directions[2, not i] = +1
-        directions[3, not i] =  0
+        directions[:, not i] =  -dir2
 

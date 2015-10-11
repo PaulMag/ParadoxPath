@@ -4,7 +4,7 @@ from FindPath import FindPath
 # pMap = (
 # "0000000000011000000001011111000101010100011111010001000111000111110000010000000001000000000000000000"
 # )
-N = 20
+N = 25
 x0 = np.random.randint(N)
 y0 = np.random.randint(N)
 x = np.random.randint(N)
@@ -39,6 +39,6 @@ print FindPath(
     nMapWidth = N,
     nMapHeight = N,
     pOutBuffer = pOutBuffer,
-    nOutBufferSize = N*N / 4,
+    nOutBufferSize = int(N**1.5),
 )
 print pOutBuffer
