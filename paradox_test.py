@@ -39,6 +39,6 @@ print FindPath(
     nMapWidth = N,
     nMapHeight = N,
     pOutBuffer = pOutBuffer,
-    nOutBufferSize = N*N,
+    nOutBufferSize = N*N / 4,
 )
 print pOutBuffer
