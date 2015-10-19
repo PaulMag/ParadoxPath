@@ -36,87 +36,106 @@ Consider performance, memory usage and assume that your code may be called
 from a multi-threaded environment.
 """
 
-currentBest = np.inf
-currentBestSnake = []
-pMapGlobal = None
-target = None
-nOutBufferSizeGlobal = None
+
+class Maze():
+
+    dir1 = np.array([+1,  0,  0, -1], dtype=int)
+    dir2 = np.array([ 0, +1, -1,  0], dtype=int)
+
+
+    def __init__(self,
+        nStartX, nStartY,
+        nTargetX, nTargetY,
+        pMap, nMapWidth, nMapHeight,
+    ):
+        self.start  = np.array([nStartY,  nStartX ], dtype=int)
+        self.target = np.array([nTargetY, nTargetX], dtype=int)
+
+        if isinstance(pMap, basestring):
+            pMap = np.array(list(pMap)).astype(bool)
+        else:
+            pMap = np.array(pMap).astype(bool)
+        pMap = pMap.reshape(nMapHeight, nMapWidth)
+        self.pMap = np.zeros((nMapHeight+1, nMapWidth+1))
+        self.pMap[:~0, :~0] = pMap  # Make map with 0-padding.
+        self.nMapWidth = nMapWidth
+
+        self.directions = np.zeros((4, 2), dtype=int)
+
+
+    def solve(self, pOutBuffer, nOutBufferSize):
+
+        self.currentBest = np.inf
+        self.currentBestSnake = []
+        self.nOutBufferSize = nOutBufferSize
+        self.set_direction(self.start)
+        self.forward([self.start])
+
+        if np.isinf(self.currentBest):
+            return -1
+        else:
+            for pos in self.currentBestSnake[1:]:  # Do not count start position.
+                pOutBuffer.append(pos[0]*self.nMapWidth + pos[1])
+            return len(pOutBuffer)
+
+
+    def forward(self, snake):
+
+        # print np.array(snake).tolist()  # Print current snake.
+        for prevPos in snake[:~0]:
+            if (snake[~0] == prevPos).all():
+                # Been here before.
+                # print "Been here before: %s" % str(prevPos)
+                return
+        best_possibility = len(snake) + np.abs(self.target - snake[~0]).sum()
+        if best_possibility >= self.currentBest:
+            # A better solution cannot be found anymore.
+            # print "A better solution cannot be found anymore."
+            return
+        elif best_possibility > self.nOutBufferSize:
+            # Snake is too long.
+            # print "Snake is too long."
+            return
+        elif (snake[~0] == self.target).all():
+            # Victory!
+            # print "Victory!"
+            self.currentBest = len(snake)
+            self.currentBestSnake = list(snake)
+            return
+
+        self.set_direction(snake[~0])
+            # This changing "globally" all the time causes some paths to be
+            # tried two times.
+        for direction in self.directions:
+            newPos = snake[~0] + direction
+            if self.pMap[newPos[0], newPos[1]]:  # if open path
+                self.forward(snake + [newPos])  # continue moving
+
+
+    def set_direction(self, head):
+
+        direction = self.target - head
+        i = np.argmax(np.abs(direction))
+
+        if direction[i] >= 0:
+            self.directions[:, i] = +self.dir1
+        else:
+            self.directions[:, i] = -self.dir1
+        if direction[not i] >= 0:
+            self.directions[:, not i] = +self.dir2
+        else:
+            self.directions[:, not i] =  -self.dir2
 
 
 def FindPath(
     nStartX, nStartY,
     nTargetX, nTargetY,
     pMap, nMapWidth, nMapHeight,
-    pOutBuffer, nOutBufferSize
+    pOutBuffer, nOutBufferSize,
 ):
-
-    if isinstance(pMap, basestring):
-        pMap = np.array(list(pMap)).astype(bool)
-    else:
-        pMap = np.array(pMap).astype(bool)
-
-    pMap = pMap.reshape(nMapHeight, nMapWidth)
-    global pMapGlobal
-    pMapGlobal = np.zeros((nMapHeight+1, nMapWidth+1))
-    pMapGlobal[:~0, :~0] = pMap
-    global target
-    target = np.array([nTargetY, nTargetX])
-    global nOutBufferSizeGlobal
-    nOutBufferSizeGlobal = nOutBufferSize
-
-    snake = [np.array([nStartY, nStartX])]
-    forward(snake)
-
-    if np.isinf(currentBest):
-        return -1
-    else:
-        for pos in currentBestSnake[1:]:  # Do not count start position.
-            pOutBuffer.append(pos[0]*nMapWidth + pos[1])
-        return currentBest - 1
-
-
-def forward(snake):
-
-    global currentBest
-    global currentBestSnake
-
-    for prevPos in snake[:~0]:
-        if (snake[~0] == prevPos).all():  # Been here before.
-            return
-    if len(snake) + np.abs(target - snake[~0]).sum() >= currentBest:
-        # A better solution has been found already.
-        return
-    # elif np.abs(target - snake[~0]).sum()
-    elif len(snake) > nOutBufferSizeGlobal:  # Snake is too long.
-        return
-    elif (snake[~0] == target).all():  # Victory!
-        currentBest = len(snake)
-        currentBestSnake = list(snake)
-        return
-
-    set_direction(snake[~0])
-    for direction in directions:
-        newPos = snake[~0] + direction
-        if pMapGlobal[newPos[0], newPos[1]]:  # if open path
-            forward(snake + [newPos])  # continue moving
-
-
-dir1 = np.array([+1,  0,  0,  -1])
-dir2 = np.array([ 0, +1, -1,  +1])
-directions = np.zeros((4, 2))
-
-def set_direction(head):
-
-    direction = target - head
-    i = np.argmax(np.abs(direction))
-    global directions
-
-    if direction[i] >= 0:
-        directions[:, i] = +dir1
-    else:
-        directions[:, i] = -dir1
-    if direction[not i] >= 0:
-        directions[:, not i] = +dir2
-    else:
-        directions[:, not i] =  -dir2
-
+    mazeObj = Maze(
+        nStartX, nStartY,
+        nTargetX, nTargetY,
+        pMap, nMapWidth, nMapHeight,
+    )
+    return mazeObj.solve(pOutBuffer, nOutBufferSize)
