@@ -1,31 +1,40 @@
 import numpy as np
 from FindPath import FindPath
 
-# pMap = (
-# "0000000000011000000001011111000101010100011111010001000111000111110000010000000001000000000000000000"
-# )
-N = 25
-x0 = np.random.randint(N)
-y0 = np.random.randint(N)
-x = np.random.randint(N)
-y = np.random.randint(N)
-pMap = np.random.randint(4, size=N*N)
+### Example 1:
+"""pMap = (
+"0000000000011000000001011111000101010100011111010001000111000111110000010000000001000000000000000000"
+)"""
+###
+
+### Example 2:
+"""pMap = [
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+    1, 1, 0, 1, 1, 1, 1, 1, 0, 1,
+    1, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+    1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
+    1, 1, 0, 0, 0, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
+    1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 1, 1, 1, 0, 0, 0, 0, 0, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+]"""
+
+Nx = 12
+Ny = 12
+
+### Example 3:
+pMap = np.random.randint(4, size=Nx*Nx)
 pMap[np.where(pMap > 1)] = 1
-pMap[y0*N + x0] = 1
-pMap[y*N + x] = 1
-# print pMap.reshape(N, N)[:10, :10]
-# pMap = [
-    # 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    # 1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
-    # 1, 1, 0, 1, 1, 1, 1, 1, 0, 1,
-    # 1, 1, 0, 1, 0, 1, 0, 1, 0, 1,
-    # 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
-    # 1, 1, 0, 0, 0, 1, 1, 1, 1, 1,
-    # 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
-    # 1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    # 1, 1, 1, 1, 0, 0, 0, 0, 0, 1,
-    # 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-# ]
+###
+
+x0 = np.random.randint(Nx)
+y0 = np.random.randint(Nx)
+x = np.random.randint(Nx)
+y = np.random.randint(Nx)
+pMap[y0*Nx + x0] = 1
+pMap[y*Nx + x] = 1
 
 pOutBuffer = []
 
@@ -36,9 +45,9 @@ print FindPath(
     nTargetX = x,
     nTargetY = y,
     pMap = pMap,
-    nMapWidth = N,
-    nMapHeight = N,
+    nMapWidth = Nx,
+    nMapHeight = Ny,
     pOutBuffer = pOutBuffer,
-    nOutBufferSize = int(N**1.5),
+    nOutBufferSize = 1000,
 )
 print pOutBuffer
