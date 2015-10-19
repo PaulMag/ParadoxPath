@@ -68,6 +68,7 @@ class Maze():
         self.currentBest = np.inf
         self.currentBestSnake = []
         self.nOutBufferSize = nOutBufferSize
+        self.set_direction(self.start)
         self.forward([self.start])
 
         if np.isinf(self.currentBest):
@@ -80,24 +81,31 @@ class Maze():
 
     def forward(self, snake):
 
+        # print np.array(snake).tolist()  # Print current snake.
         for prevPos in snake[:~0]:
             if (snake[~0] == prevPos).all():
                 # Been here before.
+                # print "Been here before: %s" % str(prevPos)
                 return
         best_possibility = len(snake) + np.abs(self.target - snake[~0]).sum()
         if best_possibility >= self.currentBest:
-            # A better solution has been found already.
+            # A better solution cannot be found anymore.
+            # print "A better solution cannot be found anymore."
             return
         elif best_possibility > self.nOutBufferSize:
             # Snake is too long.
+            # print "Snake is too long."
             return
         elif (snake[~0] == self.target).all():
             # Victory!
+            # print "Victory!"
             self.currentBest = len(snake)
             self.currentBestSnake = list(snake)
             return
 
         self.set_direction(snake[~0])
+            # This changing "globally" all the time causes some paths to be
+            # tried two times.
         for direction in self.directions:
             newPos = snake[~0] + direction
             if self.pMap[newPos[0], newPos[1]]:  # if open path
