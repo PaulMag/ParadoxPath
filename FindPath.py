@@ -39,8 +39,8 @@ from a multi-threaded environment.
 
 class Maze():
 
-    dir1 = np.array([+1,  0,  0,  -1], dtype=int)
-    dir2 = np.array([ 0, +1, -1,  +1], dtype=int)
+    dir1 = np.array([+1,  0,  0, -1], dtype=int)
+    dir2 = np.array([ 0, +1, -1,  0], dtype=int)
 
 
     def __init__(self,
