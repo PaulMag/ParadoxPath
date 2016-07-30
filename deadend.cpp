@@ -4,7 +4,7 @@ using namespace std;
 
 bool worth_checking(const int X1, const int Y1,
                     const int X2, const int Y2,
-                    unsigned char** pMap, int i, int j)
+                    unsigned char pMap[][8], int i, int j)
 {
     if (pMap[i][j] == '0') {return false;}
     if (i == Y1 && j == X1) {return false;}
@@ -14,7 +14,7 @@ bool worth_checking(const int X1, const int Y1,
 
 void deadend(const int X1, const int Y1,
              const int X2, const int Y2,
-             unsigned char** pMap,
+             unsigned char pMap[][8],
              const int nMapWidth, const int nMapHeight)
 {
     int i, j;
@@ -146,7 +146,52 @@ void deadend(const int X1, const int Y1,
     }
 }
 
+
+void test(unsigned char pMap[][8])
+{
+    std::cout << "Test. Test. Test. \n";
+    return;
+}
+
+
 int main(int argc, char* argv[]) {
+    const int nx =  8;
+    const int ny =  12;
+    unsigned char maze[ny][nx] =
+    {
+        {'0','0','0','0','0','0','0','0'},
+        {'0','1','0','0','0','0','1','0'},
+        {'0','1','1','0','1','1','1','0'},
+        {'0','0','1','1','0','1','0','0'},
+        {'0','0','0','1','1','1','0','0'},
+        {'0','0','0','0','1','1','0','0'},
+        {'0','1','0','0','0','1','1','0'},
+        {'0','1','0','1','0','1','0','0'},
+        {'0','1','1','1','1','1','1','0'},
+        {'0','0','1','0','0','0','0','0'},
+        {'0','1','1','1','1','1','1','0'},
+        {'0','0','0','0','0','0','0','0'}
+    };
+
+    int i, j;
+    for (i=0; i<ny; i++) {
+        for (j=0; j<nx; j++) {
+            std::cout << maze[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+
+    // test(maze);
+    deadend(1, 1, nx-2, ny-2, maze, nx, ny);
+
     std::cout << "Hello ParadoxPath. \n";
+
+    for (i=0; i<ny; i++) {
+        for (j=0; j<nx; j++) {
+            std::cout << maze[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+
     return 0;
 }
