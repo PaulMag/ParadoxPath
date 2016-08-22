@@ -20,12 +20,15 @@ public:
     int* dir1, dir2;
     int** directions;
 
-    Maze();
-    ~CelObj();
+    Maze(int, int, int, int, unsigned char*, int, int);
+    ~Maze();
+
+    int one2x(int);
+    int one2y(int);
 
     int solve(int*, const int);
     void forward(int*, int);
-    void setDirection(int);
+    void setDirection();
 };
 
 #endif

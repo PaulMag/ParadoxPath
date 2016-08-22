@@ -16,7 +16,7 @@ Maze:: Maze(
     this->pMap = pMap;
     this->nX = nX;
     this->nY = nY;
-    // this->directions[4][2] = {{}{}};
+    this->directions[4][2] = {{}{}};
 }
 
 
@@ -43,6 +43,18 @@ int Maze:: solve(int* pOutBuffer, const int nOutBufferSize)
         }
         return currentBest;
     }
+}
+
+
+int Maze:: one2x(int k)
+{
+    return k % nX;
+}
+
+
+int Maze:: one2y(int k)
+{
+    return k / nX;
 }
 
 
@@ -80,17 +92,51 @@ void Maze:: forward(int* snake, int snakeSize)
         return;
     }
 
-    self.set_direction(snake[~0])
+    // self.set_direction(snake[~0])
         // This changing "globally" all the time causes some paths to be
         // tried two times.
-    for direction in self.directions:
-        newPos = snake[~0] + direction
+        // Should it even be used?
+    int e;
+    int newpos[2] = {};
+    for (e=0; e<4; e++):
+        newPos[0] = snake[snakeSize-1] + direction[e][0]
+        newPos[1] = snake[snakeSize-1] + direction[e][1]
         if self.pMap[newPos[0], newPos[1]]:  // if open path
             self.forward(snake + [newPos])  // continue moving
 }
 
 
-void Maze:: setDirection(int head)
+void Maze:: setDirection()
 {
+        int dir[2] = {};
+        int dir[0] = X2 - one2x(snake[snakeSize-1])
+        int dir[1] = Y2 - one2y(snake[snakeSize-1])
+        int i = 0;
+        int j = 1;
+        if (abs(dirX) < abs(dirY))
+        {
+            i = 1;
+            j = 0;
+        }
 
+        if dir[d] >= 0:
+            directions[0][i] = + (+1)
+            directions[1][i] = + ( 0)
+            directions[2][i] = + ( 0)
+            directions[3][i] = + (-1)
+        else:
+            directions[0][i] = - (+1)
+            directions[1][i] = - ( 0)
+            directions[2][i] = - ( 0)
+            directions[3][i] = - (-1)
+        if dir[j] >= 0
+            directions[0][j] = + ( 0)
+            directions[1][j] = + (+1)
+            directions[2][j] = + (-1)
+            directions[3][j] = + ( 0)
+        else:
+            directions[0][j] = - ( 0)
+            directions[1][j] = - (+0)
+            directions[2][j] = - (-1)
+            directions[3][j] = - ( 0)
 }
