@@ -28,10 +28,11 @@ int Maze:: solve(int* pOutBuffer, const int nOutBufferSize)
 {
     this->currentBest = nOutBufferSize + 2;
     this->currentBestSnake[nOutBufferSize+1] = {};
+    currentBestSnake[0] = two2one(X2, Y2, nX)
     this->nOutBufferSize = nOutBufferSize;
 
-    // self.set_direction(self.start)
-    // self.forward([self.start])
+    set_direction()
+    forward(currentBestSnake, 1)
 
     if (currentBest > nOutBufferSize + 1) {
         return -1;
@@ -100,10 +101,13 @@ void Maze:: forward(int* snake, int snakeSize)
     int e;
     int newpos[2] = {};
     for (e=0; e<4; e++):
-        newPos[0] = snake[snakeSize-1] + direction[e][0]
-        newPos[1] = snake[snakeSize-1] + direction[e][1]
-        if self.pMap[newPos[0], newPos[1]]:  // if open path
-            self.forward(snake + [newPos])  // continue moving
+        newPos[0] = snake[snakeSize-1] + direction[e][0];
+        newPos[1] = snake[snakeSize-1] + direction[e][1];
+        if (pMap[two2one(newPos[0], newPos[1])] == 1):  // if open path
+        {
+            snake[snakeSize] = two2one(newpos[0], newpos[1], nX);  // new head
+            forward(snake, snakeSize+1)  // continue moving
+        }
 }
 
 
