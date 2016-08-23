@@ -19,17 +19,22 @@ public:
     const int nOutBufferSize;
 
     int* dir1, dir2;
-    int** directions;
+    int directions[4][2];
 
-    Maze(int, int, int, int, unsigned char*, int, int);
+    Maze(const int, const int,
+         const int, const int,
+         unsigned char*, const int, const int);
     ~Maze();
 
+    int two2one(int, int);
     int one2x(int);
     int one2y(int);
 
     int solve(int*, const int);
     void forward(int*, int);
     void setDirection();
+    bool worth_checking(int, int);
+    void deadend();
 };
 
 #endif
