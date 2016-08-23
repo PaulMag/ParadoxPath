@@ -28,7 +28,7 @@ int Maze:: solve(int* pOutBuffer, const int nOutBufferSize)
 {
     this->currentBest = nOutBufferSize + 2;
     this->currentBestSnake[nOutBufferSize+1] = {};
-    currentBestSnake[0] = two2one(X2, Y2, nX)
+    currentBestSnake[0] = two2one(X2, Y2)
     this->nOutBufferSize = nOutBufferSize;
 
     set_direction()
@@ -47,6 +47,11 @@ int Maze:: solve(int* pOutBuffer, const int nOutBufferSize)
     }
 }
 
+
+int two2one(int i, int j)
+{
+    return i * nX + j;
+}
 
 int Maze:: one2x(int k)
 {
@@ -84,7 +89,7 @@ void Maze:: forward(int* snake, int snakeSize)
         // print "Potential solution is too long."
         return;
     }
-    else if (snake[snakeSize-1] == two2one(X2, Y2, nX)) {
+    else if (snake[snakeSize-1] == two2one(X2, Y2)) {
         // Victory!
         // print "Victory!"
         currentBest = snakeSize;
@@ -105,7 +110,7 @@ void Maze:: forward(int* snake, int snakeSize)
         newPos[1] = snake[snakeSize-1] + direction[e][1];
         if (pMap[two2one(newPos[0], newPos[1])] == 1):  // if open path
         {
-            snake[snakeSize] = two2one(newpos[0], newpos[1], nX);  // new head
+            snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
             forward(snake, snakeSize+1)  // continue moving
         }
 }
