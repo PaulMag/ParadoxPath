@@ -16,10 +16,11 @@ public:
 
     int currentBest;
     int* currentBestSnake;
-    const int nOutBufferSize;
+    int nOutBufferSize;
 
     int* dir1, dir2;
-    int directions[4][2];
+    // int directions[4][2] = {{0,0}, {0,0}, {0,0}, {0,0}};
+    // int directions[4][2] = {};
 
     Maze(const int, const int,
          const int, const int,
@@ -30,7 +31,7 @@ public:
     int one2x(int);
     int one2y(int);
 
-    int solve(int*, const int);
+    int solve(int*, int);
     void forward(int*, int);
     void setDirection();
     bool worth_checking(int, int);

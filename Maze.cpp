@@ -18,20 +18,19 @@ Maze:: Maze(
     this->pMap = pMap;
     // this->nX = nX;
     // this->nY = nY;
-    this->directions = {{}{}};
+    // this->directions = {{}{}};
 }
 
 
-Maze:: ~Maze()
+Maze:: ~Maze() {}
 
 
-int Maze:: solve(int* pOutBuffer, const int nOutBufferSize) :
-    nOutBufferSize(nOutBufferSize)
+int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
 {
     this->currentBest = nOutBufferSize + 2;
     this->currentBestSnake[nOutBufferSize+1] = {};
     currentBestSnake[0] = two2one(X2, Y2)
-    // this->nOutBufferSize = nOutBufferSize;
+    this->nOutBufferSize = nOutBufferSize;
 
     set_direction()
     forward(currentBestSnake, 1)
