@@ -1,5 +1,9 @@
 #include <iostream>
 using namespace std;
+#include <cmath>
+
+#include "Maze.h"
+
 
 int two2one(int i, int j, const int nMapWidth)
 {

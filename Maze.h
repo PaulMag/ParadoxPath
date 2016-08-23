@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+#include <cmath>
 
 #ifndef MAZE_H
 #define MAZE_H
