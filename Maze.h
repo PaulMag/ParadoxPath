@@ -11,7 +11,7 @@ public:
 
     const int X1, Y1;
     const int X2, Y2;
-    const unsigned char* pMap;
+    unsigned char* pMap;  //TODO Should be const.
     const int nX, nY;
 
     int currentBest;
@@ -19,12 +19,11 @@ public:
     int nOutBufferSize;
 
     int* dir1, dir2;
-    // int directions[4][2] = {{0,0}, {0,0}, {0,0}, {0,0}};
-    // int directions[4][2] = {};
+    int** directions;
 
     Maze(const int, const int,
          const int, const int,
-         unsigned char*, const int, const int);
+         unsigned char*, const int, const int);  //TODO Should be const.
     ~Maze();
 
     int two2one(int, int);
@@ -33,7 +32,8 @@ public:
 
     int solve(int*, int);
     void forward(int*, int);
-    void setDirection();
+    void setDirection(int);
+    void setDirection(int, int);
     bool worth_checking(int, int);
     void deadend();
 };

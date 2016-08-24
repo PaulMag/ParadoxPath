@@ -8,7 +8,7 @@ using namespace std;
 Maze:: Maze(
     const int X1, const int Y1,
     const int X2, const int Y2,
-    unsigned char* pMap, const int nX, const int nY) :
+    unsigned char* pMap, const int nX, const int nY) :  //TODO Should be const.
     X1(X1), Y1(Y1), X2(X2), Y2(Y2), nX(nX), nY(nY)
 {
     // this->X1 = X1;
@@ -18,7 +18,9 @@ Maze:: Maze(
     this->pMap = pMap;
     // this->nX = nX;
     // this->nY = nY;
-    // this->directions = {{}{}};
+    this->directions = new int*[4];
+    for(int i=0; i<4; i++)
+        directions[i] = new int[2];
 }
 
 
@@ -28,12 +30,12 @@ Maze:: ~Maze() {}
 int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
 {
     this->currentBest = nOutBufferSize + 2;
-    this->currentBestSnake[nOutBufferSize+1] = {};
-    currentBestSnake[0] = two2one(X2, Y2)
+    this->currentBestSnake = new int[nOutBufferSize+1];
+    currentBestSnake[0] = two2one(X1, Y1);
     this->nOutBufferSize = nOutBufferSize;
 
-    set_direction()
-    forward(currentBestSnake, 1)
+    setDirection(currentBestSnake[0]);
+    forward(currentBestSnake, 1);
 
     if (currentBest > nOutBufferSize + 1) {
         return -1;
@@ -79,12 +81,12 @@ void Maze:: forward(int* snake, int snakeSize)
     int bestPossibility = snakeSize +
                           abs(X2 - one2x(snake[snakeSize-1])) +
                           abs(Y2 - one2y(snake[snakeSize-1]));
-    if (bestPossibility >= self.currentBest) {
+    if (bestPossibility >= currentBest) {
         // A better solution cannot be found anymore.
         // print "A better solution cannot be found anymore."
         return;
     }
-    else if (bestPossibility > self.nOutBufferSize) {
+    else if (bestPossibility > nOutBufferSize) {
         // Potential solution is too long.
         // print "Potential solution is too long."
         return;
@@ -105,50 +107,65 @@ void Maze:: forward(int* snake, int snakeSize)
         // Should it even be used?
     int e;
     int newpos[2] = {};
-    for (e=0; e<4; e++):
-        newPos[0] = snake[snakeSize-1] + direction[e][0];
-        newPos[1] = snake[snakeSize-1] + direction[e][1];
-        if (pMap[two2one(newPos[0], newPos[1])] == 1):  // if open path
+    for (e=0; e<4; e++)
+    {
+        newpos[0] = snake[snakeSize-1] + directions[e][0];
+        newpos[1] = snake[snakeSize-1] + directions[e][1];
+        if (pMap[two2one(newpos[0], newpos[1])] == '1')  // if open path
         {
             snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
-            forward(snake, snakeSize+1)  // continue moving
+            forward(snake, snakeSize+1);  // continue moving
         }
+    }
 }
 
 
-void Maze:: setDirection()
+void Maze:: setDirection(int headK)
+{
+        setDirection(one2x(headK), one2y(headK));
+}
+
+void Maze:: setDirection(int headX, int headY)
 {
         int dir[2] = {};
-        int dir[0] = X2 - one2x(snake[snakeSize-1])
-        int dir[1] = Y2 - one2y(snake[snakeSize-1])
+        dir[0] = X2 - headX;
+        dir[1] = Y2 - headY;
         int i = 0;
         int j = 1;
-        if (abs(dirX) < abs(dirY))
+        if (abs(dir[0]) < abs(dir[1]))
         {
             i = 1;
             j = 0;
         }
 
-        if dir[d] >= 0:
-            directions[0][i] = + (+1)
-            directions[1][i] = + ( 0)
-            directions[2][i] = + ( 0)
-            directions[3][i] = + (-1)
-        else:
-            directions[0][i] = - (+1)
-            directions[1][i] = - ( 0)
-            directions[2][i] = - ( 0)
-            directions[3][i] = - (-1)
-        if dir[j] >= 0
-            directions[0][j] = + ( 0)
-            directions[1][j] = + (+1)
-            directions[2][j] = + (-1)
-            directions[3][j] = + ( 0)
-        else:
-            directions[0][j] = - ( 0)
-            directions[1][j] = - (+0)
-            directions[2][j] = - (-1)
-            directions[3][j] = - ( 0)
+        if (dir[i] >= 0)
+        {
+            directions[0][i] = + (+1);
+            directions[1][i] = + ( 0);
+            directions[2][i] = + ( 0);
+            directions[3][i] = + (-1);
+        }
+        else
+        {
+            directions[0][i] = - (+1);
+            directions[1][i] = - ( 0);
+            directions[2][i] = - ( 0);
+            directions[3][i] = - (-1);
+        }
+        if (dir[j] >= 0)
+        {
+            directions[0][j] = + ( 0);
+            directions[1][j] = + (+1);
+            directions[2][j] = + (-1);
+            directions[3][j] = + ( 0);
+        }
+        else
+        {
+            directions[0][j] = - ( 0);
+            directions[1][j] = - (+0);
+            directions[2][j] = - (-1);
+            directions[3][j] = - ( 0);
+        }
 }
 
 
