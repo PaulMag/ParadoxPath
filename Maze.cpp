@@ -11,6 +11,7 @@ Maze:: Maze(
     unsigned char* pMap, const int nX, const int nY) :  //TODO Should be const.
     X1(X1), Y1(Y1), X2(X2), Y2(Y2), nX(nX), nY(nY)
 {
+    victory = false;
     // this->X1 = X1;
     // this->Y1 = Y1;
     // this->X2 = X2;
@@ -31,7 +32,7 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
 {
     this->currentBest = nOutBufferSize + 2;
     this->currentBestSnake = new int[nOutBufferSize+1];
-    currentBestSnake[0] = two2one(X1, Y1);
+    currentBestSnake[0] = two2one(Y1, X1);
     this->nOutBufferSize = nOutBufferSize;
 
     setDirection(currentBestSnake[0]);
@@ -46,14 +47,14 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
             // Do not count start position.
             pOutBuffer[p] = currentBestSnake[p+1];
         }
-        return currentBest;
+        return currentBest-1;
     }
 }
 
 
-int Maze:: two2one(int i, int j)
+int Maze:: two2one(int y, int x)
 {
-    return i * nX + j;
+    return y * nX + x;
 }
 
 int Maze:: one2x(int k)
@@ -69,12 +70,13 @@ int Maze:: one2y(int k)
 
 void Maze:: forward(int* snake, int snakeSize)
 {
+    cout << "forward (" << snake[snakeSize-1] << ") \n";
     // print np.array(snake).tolist()  // Print current snake.
     int p;
     for (p=0; p<snakeSize-1; p++) {
         if (snake[snakeSize-1] == snake[p]) {
             // Been here before.
-            // print "Been here before: %s" % str(prevPos)
+            cout << "been here before (" << snake[snakeSize-1] << ") \n";
             return;
         }
     }
@@ -83,17 +85,18 @@ void Maze:: forward(int* snake, int snakeSize)
                           abs(Y2 - one2y(snake[snakeSize-1]));
     if (bestPossibility >= currentBest) {
         // A better solution cannot be found anymore.
-        // print "A better solution cannot be found anymore."
+        cout << "A better solution cannot be found anymore. \n";
         return;
     }
     else if (bestPossibility > nOutBufferSize) {
         // Potential solution is too long.
-        // print "Potential solution is too long."
+        cout << "Potential solution is too long. \n";
         return;
     }
-    else if (snake[snakeSize-1] == two2one(X2, Y2)) {
+    else if (snake[snakeSize-1] == two2one(Y2, X2)) {
         // Victory!
-        // print "Victory!"
+        victory = true;
+        cout << "Victory! \n";
         currentBest = snakeSize;
         for (p=0; p<snakeSize; p++) {
             currentBestSnake[p] = snake[p];
@@ -109,14 +112,40 @@ void Maze:: forward(int* snake, int snakeSize)
     int newpos[2] = {};
     for (e=0; e<4; e++)
     {
-        newpos[0] = snake[snakeSize-1] + directions[e][0];
-        newpos[1] = snake[snakeSize-1] + directions[e][1];
+        if (victory) {
+            cout << "V!\n";
+            //TODO This is a bad implementation! It only picks the first solution found!
+            return;
+        }
+        newpos[0] = one2y(snake[snakeSize-1]) + directions[e][0];
+        newpos[1] = one2x(snake[snakeSize-1]) + directions[e][1];
+        // cout << "[" << directions[e][0] << ", " << directions[e][1] << "] \n";
+        // cout << snake[snakeSize] << " ";
         if (pMap[two2one(newpos[0], newpos[1])] == '1')  // if open path
         {
             snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
+            if (65 == 65) {
+                cout << snake[snakeSize-1] << " - "
+                     << two2one(newpos[0], newpos[1]) << " is open. "
+                     << "[" << one2x(snake[snakeSize-1]) << ", " << one2y(snake[snakeSize-1]) << "] "
+                     << "(" << snake[snakeSize-1] << ") "
+                     << "[" << newpos[0] << ", " << newpos[1] << "] "
+                     << "[" << directions[e][0] << ", " << directions[e][1] << "] \n";
+            }
             forward(snake, snakeSize+1);  // continue moving
         }
+        else {
+            if (65 == 65) {
+                cout << snake[snakeSize-1] << " - "
+                     << two2one(newpos[0], newpos[1]) << " is closed. "
+                     << "[" << one2x(snake[snakeSize-1]) << ", " << one2y(snake[snakeSize-1]) << "] "
+                     << "(" << snake[snakeSize-1] << ") "
+                     << "[" << newpos[0] << ", " << newpos[1] << "] "
+                     << "[" << directions[e][0] << ", " << directions[e][1] << "] \n";
+            }
+        }
     }
+    cout << "stop (" << snake[snakeSize-1] << ") \n";
 }
 
 

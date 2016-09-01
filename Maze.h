@@ -14,6 +14,7 @@ public:
     unsigned char* pMap;  //TODO Should be const.
     const int nX, nY;
 
+    bool victory;
     int currentBest;
     int* currentBestSnake;
     int nOutBufferSize;
