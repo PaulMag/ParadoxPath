@@ -12,13 +12,7 @@ Maze:: Maze(
     X1(X1), Y1(Y1), X2(X2), Y2(Y2), nX(nX), nY(nY)
 {
     victory = false;
-    // this->X1 = X1;
-    // this->Y1 = Y1;
-    // this->X2 = X2;
-    // this->Y2 = Y2;
     this->pMap = pMap;
-    // this->nX = nX;
-    // this->nY = nY;
     this->directions = new int*[4];
     for(int i=0; i<4; i++)
         directions[i] = new int[2];
@@ -70,13 +64,12 @@ int Maze:: one2y(int k)
 
 void Maze:: forward(int* snake, int snakeSize)
 {
-    cout << "forward (" << snake[snakeSize-1] << ") \n";
     // print np.array(snake).tolist()  // Print current snake.
     int p;
     for (p=0; p<snakeSize-1; p++) {
         if (snake[snakeSize-1] == snake[p]) {
             // Been here before.
-            cout << "been here before (" << snake[snakeSize-1] << ") \n";
+            // cout << "been here before (" << snake[snakeSize-1] << ") \n";
             return;
         }
     }
@@ -104,48 +97,24 @@ void Maze:: forward(int* snake, int snakeSize)
         return;
     }
 
-    // self.set_direction(snake[~0])
-        // This changing "globally" all the time causes some paths to be
-        // tried two times.
-        // Should it even be used?
     int e;
     int newpos[2] = {};
     for (e=0; e<4; e++)
     {
-        if (victory) {
-            cout << "V!\n";
+        if (victory)
+        {
             //TODO This is a bad implementation! It only picks the first solution found!
             return;
         }
         newpos[0] = one2y(snake[snakeSize-1]) + directions[e][0];
         newpos[1] = one2x(snake[snakeSize-1]) + directions[e][1];
-        // cout << "[" << directions[e][0] << ", " << directions[e][1] << "] \n";
-        // cout << snake[snakeSize] << " ";
         if (pMap[two2one(newpos[0], newpos[1])] == '1')  // if open path
         {
             snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
-            if (65 == 65) {
-                cout << snake[snakeSize-1] << " - "
-                     << two2one(newpos[0], newpos[1]) << " is open. "
-                     << "[" << one2x(snake[snakeSize-1]) << ", " << one2y(snake[snakeSize-1]) << "] "
-                     << "(" << snake[snakeSize-1] << ") "
-                     << "[" << newpos[0] << ", " << newpos[1] << "] "
-                     << "[" << directions[e][0] << ", " << directions[e][1] << "] \n";
-            }
             forward(snake, snakeSize+1);  // continue moving
         }
-        else {
-            if (65 == 65) {
-                cout << snake[snakeSize-1] << " - "
-                     << two2one(newpos[0], newpos[1]) << " is closed. "
-                     << "[" << one2x(snake[snakeSize-1]) << ", " << one2y(snake[snakeSize-1]) << "] "
-                     << "(" << snake[snakeSize-1] << ") "
-                     << "[" << newpos[0] << ", " << newpos[1] << "] "
-                     << "[" << directions[e][0] << ", " << directions[e][1] << "] \n";
-            }
-        }
+        // elseif no open path: stop
     }
-    cout << "stop (" << snake[snakeSize-1] << ") \n";
 }
 
 
