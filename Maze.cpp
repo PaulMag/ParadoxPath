@@ -177,109 +177,118 @@ void Maze:: deadend()
     int i, j;
     int count;
 
-    /* Check corners */
+    bool deadend_exists;
+    while (deadend_exists) {
+        deadend_exists = false;
 
-    i = 0;
-    j = 0;
-    if (worth_checking(i, j)) {
-        count = 0;
-        if (pMap[two2one(i, j+1)] == '0') {count++;}
-        if (pMap[two2one(i+1, j)] == '0') {count++;}
-        if (count >= 1) {
-            pMap[two2one(i, j)] = '0';
+        /* Check corners */
+
+        i = 0;
+        j = 0;
+        if (worth_checking(i, j)) {
+            count = 0;
+            if (pMap[two2one(i, j+1)] == '0') {count++;}
+            if (pMap[two2one(i+1, j)] == '0') {count++;}
+            if (count >= 1) {
+                pMap[two2one(i, j)] = '0';
+                deadend_exists = true;
+            }
         }
-    }
 
-    j = nX - 1;
-    if (worth_checking(i, j)) {
-        count = 0;
-        if (pMap[two2one(i, j+1)] == '0') {count++;}
-        if (pMap[two2one(i-1, j)] == '0') {count++;}
-        if (count >= 1) {
-            pMap[two2one(i, j)] = '0';
-        }
-    }
-
-    i = nY - 1;
-    j = 0;
-    if (worth_checking(i, j)) {
-        count = 0;
-        if (pMap[two2one(i, j-1)] == '0') {count++;}
-        if (pMap[two2one(i+1, j)] == '0') {count++;}
-        if (count >= 1) {
-            pMap[two2one(i, j)] = '0';
-        }
-    }
-
-    j = nX - 1;
-    if (worth_checking(i, j)) {
-        count = 0;
-        if (pMap[two2one(i, j-1)] == '0') {count++;}
-        if (pMap[two2one(i-1, j)] == '0') {count++;}
-        if (count >= 1) {
-            pMap[two2one(i, j)] = '0';
-        }
-    }
-
-    /* Check borders */
-
-    i = 0;
-    for (j=1; j<nX-1; j++) {
+        j = nX - 1;
         if (worth_checking(i, j)) {
             count = 0;
             if (pMap[two2one(i, j-1)] == '0') {count++;}
-            if (pMap[two2one(i, j+1)] == '0') {count++;}
             if (pMap[two2one(i+1, j)] == '0') {count++;}
-            if (count >= 2) {
+            if (count >= 1) {
                 pMap[two2one(i, j)] = '0';
+                deadend_exists = true;
             }
         }
-    }
 
-    i = nY-1;
-    for (j=1; j<nX-1; j++) {
-        if (! worth_checking(i, j)) {
-            count = 0;
-            if (pMap[two2one(i, j-1)] == '0') {count++;}
-            if (pMap[two2one(i, j+1)] == '0') {count++;}
-            if (pMap[two2one(i-1, j)] == '0') {count++;}
-            if (count >= 2) {
-                pMap[two2one(i, j)] = '0';
-            }
-        }
-    }
-
-    j = 0;
-    for (i=1; i<nY-1; i++) {
-        if (! worth_checking(i, j)) {
+        i = nY - 1;
+        j = 0;
+        if (worth_checking(i, j)) {
             count = 0;
             if (pMap[two2one(i, j+1)] == '0') {count++;}
             if (pMap[two2one(i-1, j)] == '0') {count++;}
-            if (pMap[two2one(i+1, j)] == '0') {count++;}
-            if (count >= 2) {
+            if (count >= 1) {
                 pMap[two2one(i, j)] = '0';
+                deadend_exists = true;
             }
         }
-    }
 
-    j = nX-1;
-    for (i=1; i<nY-1; i++) {
-        if (! worth_checking(i, j)) {
+        j = nX - 1;
+        if (worth_checking(i, j)) {
             count = 0;
             if (pMap[two2one(i, j-1)] == '0') {count++;}
             if (pMap[two2one(i-1, j)] == '0') {count++;}
-            if (pMap[two2one(i+1, j)] == '0') {count++;}
-            if (count >= 2) {
+            if (count >= 1) {
                 pMap[two2one(i, j)] = '0';
+                deadend_exists = true;
             }
         }
-    }
 
-    /* Check interior */
+        /* Check borders */
 
-    bool deadend_exists = true;
-    while (deadend_exists) {
-        deadend_exists = false;
+        i = 0;
+        for (j=1; j<nX-1; j++) {
+            if (worth_checking(i, j)) {
+                count = 0;
+                if (pMap[two2one(i, j-1)] == '0') {count++;}
+                if (pMap[two2one(i, j+1)] == '0') {count++;}
+                if (pMap[two2one(i+1, j)] == '0') {count++;}
+                if (count >= 2) {
+                    pMap[two2one(i, j)] = '0';
+                    deadend_exists = true;
+                }
+            }
+        }
+
+        i = nY-1;
+        for (j=1; j<nX-1; j++) {
+            if (worth_checking(i, j)) {
+                count = 0;
+                if (pMap[two2one(i, j-1)] == '0') {count++;}
+                if (pMap[two2one(i, j+1)] == '0') {count++;}
+                if (pMap[two2one(i-1, j)] == '0') {count++;}
+                if (count >= 2) {
+                    pMap[two2one(i, j)] = '0';
+                    deadend_exists = true;
+                }
+            }
+        }
+
+        j = 0;
+        for (i=1; i<nY-1; i++) {
+            if (worth_checking(i, j)) {
+                count = 0;
+                if (pMap[two2one(i, j+1)] == '0') {count++;}
+                if (pMap[two2one(i-1, j)] == '0') {count++;}
+                if (pMap[two2one(i+1, j)] == '0') {count++;}
+                if (count >= 2) {
+                    pMap[two2one(i, j)] = '0';
+                    deadend_exists = true;
+                }
+            }
+        }
+
+        j = nX-1;
+        for (i=1; i<nY-1; i++) {
+            if (worth_checking(i, j)) {
+                count = 0;
+                if (pMap[two2one(i, j-1)] == '0') {count++;}
+                if (pMap[two2one(i-1, j)] == '0') {count++;}
+                if (pMap[two2one(i+1, j)] == '0') {count++;}
+                if (count >= 2) {
+                    pMap[two2one(i, j)] = '0';
+                    deadend_exists = true;
+                }
+            }
+        }
+
+        /* Check interior */
+
         for (i=1; i<nY-1; i++) {
             for (j=1; j<nX-1; j++) {
                 if (! worth_checking(i, j)) {
