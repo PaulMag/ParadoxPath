@@ -11,62 +11,60 @@ int two2one(int y, int x, int nMapWidth)
 }
 
 
-void test(unsigned char* pMap)
+int FindPath(const int nStartX, const int nStartY,
+             const int nTargetX, const int nTargetY,
+             const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
+             int* pOutBuffer, const int nOutBufferSize)
 {
-    std::cout << "Test. Test. Test. \n";
-    return;
+    Maze m = Maze(nStartX, nStartY, nTargetX, nTargetY, pMap, nMapWidth, nMapHeight);
+
+    int i, j;
+    for (i=0; i<nMapHeight; i++) {
+        for (j=0; j<nMapWidth; j++) {
+            cout << pMap[two2one(i, j, nMapWidth)] << " ";
+        }
+        cout << "\n";
+    }
+    cout << "Removing dead ends. \n";
+
+    m.deadend();
+
+    for (i=0; i<nMapHeight; i++) {
+        for (j=0; j<nMapWidth; j++) {
+            cout << m.pMap[two2one(i, j, nMapWidth)] << " ";
+        }
+        cout << "\n";
+    }
+
+    return m.solve(pOutBuffer, nOutBufferSize);
 }
 
 
 int main(int argc, char* argv[]) {
     const int nx =  10;
     const int ny =  12;
-    unsigned char maze[ny*nx] =
+    const unsigned char pMapC[ny*nx] =
     {
-        '0','0','0','0','0','0','0','0','0','0',
-        '0','1','0','0','0','0','1','0','0','0',
-        '0','1','1','0','1','1','1','0','0','0',
+        '1','1','0','0','0','0','0','0','0','1',
+        '0','1','0','0','0','0','1','0','0','1',
+        '0','1','1','0','1','1','1','0','0','1',
         '0','0','1','1','0','1','0','0','0','0',
         '0','0','0','1','1','1','0','0','0','0',
         '0','0','0','0','0','1','0','0','0','0',
-        '0','1','0','0','0','1','1','0','0','0',
-        '0','1','0','1','0','1','0','0','0','0',
-        '0','1','1','1','1','1','1','0','0','0',
+        '0','1','0','0','0','1','1','1','1','1',
+        '0','1','0','1','0','1','0','0','0','1',
+        '0','1','1','1','1','1','1','0','0','1',
         '0','0','1','0','0','0','0','0','0','0',
-        '0','1','1','1','1','1','1','0','0','0',
-        '0','0','0','0','0','0','0','0','0','0'
+        '0','1','1','1','1','1','1','1','0','0',
+        '0','1','1','1','1','1','1','0','0','0'
     };
 
-    int i, j;
-    for (i=0; i<ny; i++) {
-        for (j=0; j<nx; j++) {
-            std::cout << maze[two2one(i, j, nx)] << " ";
-        }
-        std::cout << "\n";
-    }
-
-    // test(maze);
-    // deadend(1, 1, nx-2, ny-2, maze, nx, ny);
-    Maze m = Maze(1, 1, 6, 10, maze, nx, ny);
-
-    std::cout << "Hello ParadoxPath. \n";
-
-    m.deadend();
-
-    for (i=0; i<ny; i++) {
-        for (j=0; j<nx; j++) {
-            std::cout << m.pMap[two2one(i, j, nx)] << " ";
-        }
-        std::cout << "\n";
-    }
-
-    int best;
-    int pOutBufferSize = 100;
-    int* pOutBuffer = new int[pOutBufferSize];
-    best = m.solve(pOutBuffer, pOutBufferSize);
+    int nOutBufferSize = 100;
+    int* pOutBuffer = new int[nOutBufferSize];
+    int best = FindPath(0, 0, 6, 11, pMapC, nx, ny, pOutBuffer, nOutBufferSize);
 
     std::cout << "Best solution: " << best << " steps. \n";
-    for (int k=0; k<pOutBufferSize; k++)
+    for (int k=0; k<best; k++)
     {
         cout << pOutBuffer[k] << " ";
         if (k % 20 == 19)
