@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
 #include <cmath>
+#include <vector>
 
 #include "Maze.h"
 
@@ -11,7 +12,6 @@ Maze:: Maze(
     unsigned char* pMap, const int nX, const int nY) :  //TODO Should be const.
     X1(X1), Y1(Y1), X2(X2), Y2(Y2), nX(nX), nY(nY)
 {
-    victory = false;
     this->pMap = pMap;
     this->directions = new int*[4];
     for(int i=0; i<4; i++)
@@ -30,7 +30,9 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
     this->nOutBufferSize = nOutBufferSize;
 
     setDirection(currentBestSnake[0]);
-    forward(currentBestSnake, 1);
+    vector<int> snake(nOutBufferSize+1);
+    snake[0] = two2one(Y1, X1);
+    forward(snake, 1);
 
     if (currentBest > nOutBufferSize + 1) {
         return -1;
@@ -62,7 +64,7 @@ int Maze:: one2y(int k)
 }
 
 
-void Maze:: forward(int* snake, int snakeSize)
+void Maze:: forward(vector<int> snake, int snakeSize)
 {
     // print np.array(snake).tolist()  // Print current snake.
     int p;
@@ -88,7 +90,6 @@ void Maze:: forward(int* snake, int snakeSize)
     }
     else if (snake[snakeSize-1] == two2one(Y2, X2)) {
         // Victory!
-        victory = true;
         cout << "Victory! \n";
         currentBest = snakeSize;
         for (p=0; p<snakeSize; p++) {
@@ -101,11 +102,6 @@ void Maze:: forward(int* snake, int snakeSize)
     int newpos[2] = {};
     for (e=0; e<4; e++)
     {
-        if (victory)
-        {
-            //TODO This is a bad implementation! It only picks the first solution found!
-            return;
-        }
         newpos[0] = one2y(snake[snakeSize-1]) + directions[e][0];
         newpos[1] = one2x(snake[snakeSize-1]) + directions[e][1];
         if (pMap[two2one(newpos[0], newpos[1])] == '1')  // if open path

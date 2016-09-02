@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
 #include <cmath>
+#include <vector>
 
 #ifndef MAZE_H
 #define MAZE_H
@@ -14,7 +15,6 @@ public:
     unsigned char* pMap;  //TODO Should be const.
     const int nX, nY;
 
-    bool victory;
     int currentBest;
     int* currentBestSnake;
     int nOutBufferSize;
@@ -32,7 +32,7 @@ public:
     int one2y(int);
 
     int solve(int*, int);
-    void forward(int*, int);
+    void forward(vector<int>, int);
     void setDirection(int);
     void setDirection(int, int);
     bool worth_checking(int, int);
