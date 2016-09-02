@@ -199,7 +199,7 @@ void Maze:: deadend()
     int i, j;
     int count;
 
-    bool deadend_exists;
+    bool deadend_exists = true;
     while (deadend_exists) {
         deadend_exists = false;
 
