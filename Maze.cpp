@@ -9,13 +9,31 @@ using namespace std;
 Maze:: Maze(
     const int X1, const int Y1,
     const int X2, const int Y2,
-    unsigned char* pMap, const int nX, const int nY) :  //TODO Should be const.
+    unsigned char* pMap, const int nX, const int nY) :
     X1(X1), Y1(Y1), X2(X2), Y2(Y2), nX(nX), nY(nY)
 {
     this->pMap = pMap;
     this->directions = new int*[4];
     for(int i=0; i<4; i++)
         directions[i] = new int[2];
+}
+
+
+Maze:: Maze(
+    const int X1, const int Y1,
+    const int X2, const int Y2,
+    const unsigned char* pMapC, const int nX, const int nY) :
+    X1(X1), Y1(Y1), X2(X2), Y2(Y2), nX(nX), nY(nY)
+{
+    this->directions = new int*[4];
+    for(int i=0; i<4; i++)
+        directions[i] = new int[2];
+
+    this->pMap = new unsigned char[nX*nY];
+    for (int k=0; k<nX*nY; k++)
+    {
+        pMap[k] = pMapC[k];
+    }
 }
 
 

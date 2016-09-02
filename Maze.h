@@ -12,7 +12,8 @@ public:
 
     const int X1, Y1;
     const int X2, Y2;
-    unsigned char* pMap;  //TODO Should be const.
+    unsigned char* pMap;
+    const unsigned char* pMapC;
     const int nX, nY;
 
     int currentBest;
@@ -24,7 +25,10 @@ public:
 
     Maze(const int, const int,
          const int, const int,
-         unsigned char*, const int, const int);  //TODO Should be const.
+         unsigned char*, const int, const int);
+    Maze(const int, const int,
+         const int, const int,
+         const unsigned char*, const int, const int);
     ~Maze();
 
     int two2one(int, int);
