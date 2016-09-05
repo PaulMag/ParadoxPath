@@ -89,6 +89,7 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         if (snake[snakeSize-1] == snake[p]) {
             // Been here before.
             // cout << "been here before (" << snake[snakeSize-1] << ") \n";
+            snake.clear();  // must remove all the snake copies to not clog memory
             return;
         }
     }
@@ -98,11 +99,13 @@ void Maze:: forward(vector<int> snake, int snakeSize)
     if (bestPossibility >= currentBest) {
         // A better solution cannot be found anymore.
         // cout << "A better solution cannot be found anymore. \n";
+        snake.clear();
         return;
     }
     else if (bestPossibility > nOutBufferSize) {
         // Potential solution is too long.
         // cout << "Potential solution is too long. \n";
+        snake.clear();
         return;
     }
     else if (snake[snakeSize-1] == two2one(Y2, X2)) {
@@ -112,6 +115,7 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         for (p=0; p<snakeSize; p++) {
             currentBestSnake[p] = snake[p];
         }
+        snake.clear();
         return;
     }
 
@@ -132,6 +136,8 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         }
         // elseif no open path: return
     }
+    snake.clear();
+    return;
 }
 
 
