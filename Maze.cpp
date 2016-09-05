@@ -126,7 +126,7 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         {
             return;  // out of bounds
         }
-        if (pMap[two2one(newpos[0], newpos[1])] == '1')  // if open path
+        if (pMap[two2one(newpos[0], newpos[1])] == 1)  // if open path
         {
             snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
             forward(snake, snakeSize+1);  // continue moving
@@ -187,7 +187,7 @@ void Maze:: setDirection(int headX, int headY)
 
 bool Maze:: worth_checking(int i, int j)
 {
-    if (pMap[two2one(i, j)] == '0') {return false;}
+    if (pMap[two2one(i, j)] == 0) {return false;}
     if (i == Y1 && j == X1) {return false;}
     if (i == Y2 && j == X2) {return false;}
     return true;
@@ -209,10 +209,10 @@ void Maze:: deadend()
         j = 0;
         if (worth_checking(i, j)) {
             count = 0;
-            if (pMap[two2one(i, j+1)] == '0') {count++;}
-            if (pMap[two2one(i+1, j)] == '0') {count++;}
+            if (pMap[two2one(i, j+1)] == 0) {count++;}
+            if (pMap[two2one(i+1, j)] == 0) {count++;}
             if (count >= 1) {
-                pMap[two2one(i, j)] = '0';
+                pMap[two2one(i, j)] = 0;
                 deadend_exists = true;
             }
         }
@@ -220,10 +220,10 @@ void Maze:: deadend()
         j = nX - 1;
         if (worth_checking(i, j)) {
             count = 0;
-            if (pMap[two2one(i, j-1)] == '0') {count++;}
-            if (pMap[two2one(i+1, j)] == '0') {count++;}
+            if (pMap[two2one(i, j-1)] == 0) {count++;}
+            if (pMap[two2one(i+1, j)] == 0) {count++;}
             if (count >= 1) {
-                pMap[two2one(i, j)] = '0';
+                pMap[two2one(i, j)] = 0;
                 deadend_exists = true;
             }
         }
@@ -232,10 +232,10 @@ void Maze:: deadend()
         j = 0;
         if (worth_checking(i, j)) {
             count = 0;
-            if (pMap[two2one(i, j+1)] == '0') {count++;}
-            if (pMap[two2one(i-1, j)] == '0') {count++;}
+            if (pMap[two2one(i, j+1)] == 0) {count++;}
+            if (pMap[two2one(i-1, j)] == 0) {count++;}
             if (count >= 1) {
-                pMap[two2one(i, j)] = '0';
+                pMap[two2one(i, j)] = 0;
                 deadend_exists = true;
             }
         }
@@ -243,10 +243,10 @@ void Maze:: deadend()
         j = nX - 1;
         if (worth_checking(i, j)) {
             count = 0;
-            if (pMap[two2one(i, j-1)] == '0') {count++;}
-            if (pMap[two2one(i-1, j)] == '0') {count++;}
+            if (pMap[two2one(i, j-1)] == 0) {count++;}
+            if (pMap[two2one(i-1, j)] == 0) {count++;}
             if (count >= 1) {
-                pMap[two2one(i, j)] = '0';
+                pMap[two2one(i, j)] = 0;
                 deadend_exists = true;
             }
         }
@@ -257,11 +257,11 @@ void Maze:: deadend()
         for (j=1; j<nX-1; j++) {
             if (worth_checking(i, j)) {
                 count = 0;
-                if (pMap[two2one(i, j-1)] == '0') {count++;}
-                if (pMap[two2one(i, j+1)] == '0') {count++;}
-                if (pMap[two2one(i+1, j)] == '0') {count++;}
+                if (pMap[two2one(i, j-1)] == 0) {count++;}
+                if (pMap[two2one(i, j+1)] == 0) {count++;}
+                if (pMap[two2one(i+1, j)] == 0) {count++;}
                 if (count >= 2) {
-                    pMap[two2one(i, j)] = '0';
+                    pMap[two2one(i, j)] = 0;
                     deadend_exists = true;
                 }
             }
@@ -271,11 +271,11 @@ void Maze:: deadend()
         for (j=1; j<nX-1; j++) {
             if (worth_checking(i, j)) {
                 count = 0;
-                if (pMap[two2one(i, j-1)] == '0') {count++;}
-                if (pMap[two2one(i, j+1)] == '0') {count++;}
-                if (pMap[two2one(i-1, j)] == '0') {count++;}
+                if (pMap[two2one(i, j-1)] == 0) {count++;}
+                if (pMap[two2one(i, j+1)] == 0) {count++;}
+                if (pMap[two2one(i-1, j)] == 0) {count++;}
                 if (count >= 2) {
-                    pMap[two2one(i, j)] = '0';
+                    pMap[two2one(i, j)] = 0;
                     deadend_exists = true;
                 }
             }
@@ -285,11 +285,11 @@ void Maze:: deadend()
         for (i=1; i<nY-1; i++) {
             if (worth_checking(i, j)) {
                 count = 0;
-                if (pMap[two2one(i, j+1)] == '0') {count++;}
-                if (pMap[two2one(i-1, j)] == '0') {count++;}
-                if (pMap[two2one(i+1, j)] == '0') {count++;}
+                if (pMap[two2one(i, j+1)] == 0) {count++;}
+                if (pMap[two2one(i-1, j)] == 0) {count++;}
+                if (pMap[two2one(i+1, j)] == 0) {count++;}
                 if (count >= 2) {
-                    pMap[two2one(i, j)] = '0';
+                    pMap[two2one(i, j)] = 0;
                     deadend_exists = true;
                 }
             }
@@ -299,11 +299,11 @@ void Maze:: deadend()
         for (i=1; i<nY-1; i++) {
             if (worth_checking(i, j)) {
                 count = 0;
-                if (pMap[two2one(i, j-1)] == '0') {count++;}
-                if (pMap[two2one(i-1, j)] == '0') {count++;}
-                if (pMap[two2one(i+1, j)] == '0') {count++;}
+                if (pMap[two2one(i, j-1)] == 0) {count++;}
+                if (pMap[two2one(i-1, j)] == 0) {count++;}
+                if (pMap[two2one(i+1, j)] == 0) {count++;}
                 if (count >= 2) {
-                    pMap[two2one(i, j)] = '0';
+                    pMap[two2one(i, j)] = 0;
                     deadend_exists = true;
                 }
             }
@@ -317,15 +317,15 @@ void Maze:: deadend()
                     continue;
                 }
                 count = 0;
-                if (pMap[two2one(i, j-1)] == '0') {count++;}
-                if (pMap[two2one(i, j+1)] == '0') {count++;}
-                if (pMap[two2one(i-1, j)] == '0') {count++;}
-                if (pMap[two2one(i+1, j)] == '0') {count++;}
+                if (pMap[two2one(i, j-1)] == 0) {count++;}
+                if (pMap[two2one(i, j+1)] == 0) {count++;}
+                if (pMap[two2one(i-1, j)] == 0) {count++;}
+                if (pMap[two2one(i+1, j)] == 0) {count++;}
                 if (count >= 3) {
                     /* There are 3 or more walls around this point, so it
                      * must be a dead end. Fill it in.
                      */
-                    pMap[two2one(i, j)] = '0';
+                    pMap[two2one(i, j)] = 0;
                     deadend_exists = true;
                     /* If not a single deadend was found the iteration will
                      * stop.
