@@ -84,7 +84,6 @@ int Maze:: one2y(int k)
 
 void Maze:: forward(vector<int> snake, int snakeSize)
 {
-    // print np.array(snake).tolist()  // Print current snake.
     int p;
     for (p=0; p<snakeSize-1; p++) {
         if (snake[snakeSize-1] == snake[p]) {
@@ -98,17 +97,17 @@ void Maze:: forward(vector<int> snake, int snakeSize)
                           abs(Y2 - one2y(snake[snakeSize-1]));
     if (bestPossibility >= currentBest) {
         // A better solution cannot be found anymore.
-        cout << "A better solution cannot be found anymore. \n";
+        // cout << "A better solution cannot be found anymore. \n";
         return;
     }
     else if (bestPossibility > nOutBufferSize) {
         // Potential solution is too long.
-        cout << "Potential solution is too long. \n";
+        // cout << "Potential solution is too long. \n";
         return;
     }
     else if (snake[snakeSize-1] == two2one(Y2, X2)) {
         // Victory!
-        cout << "Victory! \n";
+        // cout << "Victory! \n";
         currentBest = snakeSize;
         for (p=0; p<snakeSize; p++) {
             currentBestSnake[p] = snake[p];
@@ -131,7 +130,7 @@ void Maze:: forward(vector<int> snake, int snakeSize)
             snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
             forward(snake, snakeSize+1);  // continue moving
         }
-        // elseif no open path: stop
+        // elseif no open path: return
     }
 }
 
