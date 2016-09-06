@@ -21,7 +21,6 @@ public:
     int nOutBufferSize;
 
     int* dir1, dir2;
-    int** directions;
 
     Maze(const int, const int,
          const int, const int,
@@ -37,8 +36,8 @@ public:
 
     int solve(int*, int);
     void forward(vector<int>, int);
-    void setDirection(int);
-    void setDirection(int, int);
+    vector<vector<int>> setDirection(int);
+    vector<vector<int>> setDirection(int, int);
     bool worth_checking(int, int);
     void deadend();
 };

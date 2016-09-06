@@ -13,9 +13,6 @@ Maze:: Maze(
     X1(X1), Y1(Y1), X2(X2), Y2(Y2), nX(nX), nY(nY)
 {
     this->pMap = pMap;
-    this->directions = new int*[4];
-    for(int i=0; i<4; i++)
-        directions[i] = new int[2];
 }
 
 
@@ -25,10 +22,6 @@ Maze:: Maze(
     const unsigned char* pMapC, const int nX, const int nY) :
     X1(X1), Y1(Y1), X2(X2), Y2(Y2), nX(nX), nY(nY)
 {
-    this->directions = new int*[4];
-    for(int i=0; i<4; i++)
-        directions[i] = new int[2];
-
     this->pMap = new unsigned char[nX*nY];
     for (int k=0; k<nX*nY; k++)
     {
@@ -47,7 +40,6 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
     currentBestSnake[0] = two2one(Y1, X1);
     this->nOutBufferSize = nOutBufferSize;
 
-    setDirection(currentBestSnake[0]);
     vector<int> snake(nOutBufferSize+1);
     snake[0] = two2one(Y1, X1);
     forward(snake, 1);
@@ -119,6 +111,7 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         return;
     }
 
+    vector<vector<int>> directions = setDirection(currentBestSnake[0]);
     int e;
     int newpos[2] = {};
     for (e=0; e<4; e++)
@@ -136,57 +129,60 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         }
         // elseif no open path: return
     }
+    directions.clear();
     snake.clear();
     return;
 }
 
 
-void Maze:: setDirection(int headK)
+vector<vector<int>> Maze:: setDirection(int headK)
 {
-        setDirection(one2x(headK), one2y(headK));
+    return setDirection(one2x(headK), one2y(headK));
 }
 
-void Maze:: setDirection(int headX, int headY)
+vector<vector<int>> Maze:: setDirection(int headX, int headY)
 {
-        int dir[2] = {};
-        dir[0] = X2 - headX;
-        dir[1] = Y2 - headY;
-        int i = 0;
-        int j = 1;
-        if (abs(dir[0]) < abs(dir[1]))
-        {
-            i = 1;
-            j = 0;
-        }
+    int dir[2] = {};
+    dir[0] = X2 - headX;
+    dir[1] = Y2 - headY;
+    int i = 0;
+    int j = 1;
+    if (abs(dir[0]) < abs(dir[1]))
+    {
+        i = 1;
+        j = 0;
+    }
+    vector<vector<int>> directions {{0,0}, {0,0}, {0,0}, {0,0}};
 
-        if (dir[i] >= 0)
-        {
-            directions[0][i] = + (+1);
-            directions[1][i] = + ( 0);
-            directions[2][i] = + ( 0);
-            directions[3][i] = + (-1);
-        }
-        else
-        {
-            directions[0][i] = - (+1);
-            directions[1][i] = - ( 0);
-            directions[2][i] = - ( 0);
-            directions[3][i] = - (-1);
-        }
-        if (dir[j] >= 0)
-        {
-            directions[0][j] = + ( 0);
-            directions[1][j] = + (+1);
-            directions[2][j] = + (-1);
-            directions[3][j] = + ( 0);
-        }
-        else
-        {
-            directions[0][j] = - ( 0);
-            directions[1][j] = - (+0);
-            directions[2][j] = - (-1);
-            directions[3][j] = - ( 0);
-        }
+    if (dir[i] >= 0)
+    {
+        directions[0][i] = + (+1);
+        directions[1][i] = + ( 0);
+        directions[2][i] = + ( 0);
+        directions[3][i] = + (-1);
+    }
+    else
+    {
+        directions[0][i] = - (+1);
+        directions[1][i] = - ( 0);
+        directions[2][i] = - ( 0);
+        directions[3][i] = - (-1);
+    }
+    if (dir[j] >= 0)
+    {
+        directions[0][j] = + ( 0);
+        directions[1][j] = + (+1);
+        directions[2][j] = + (-1);
+        directions[3][j] = + ( 0);
+    }
+    else
+    {
+        directions[0][j] = - ( 0);
+        directions[1][j] = - (+0);
+        directions[2][j] = - (-1);
+        directions[3][j] = - ( 0);
+    }
+    return directions;
 }
 
 
