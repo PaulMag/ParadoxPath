@@ -120,7 +120,7 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         newpos[1] = one2x(snake[snakeSize-1]) + directions[e][1];
         if (newpos[0] < 0 or newpos[1] < 0 or newpos[0] >= nY or newpos[1] >= nX)
         {
-            return;  // out of bounds
+            continue;  // out of bounds, skip forward
         }
         if (pMap[two2one(newpos[0], newpos[1])] == 1)  // if open path
         {
