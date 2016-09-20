@@ -40,7 +40,7 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
     currentBestSnake[0] = two2one(Y1, X1);
     this->nOutBufferSize = nOutBufferSize;
 
-    vector<int> snake(nOutBufferSize+1);
+    vector<int> snake(1);
     snake[0] = two2one(Y1, X1);
     forward(snake, 1);
 
@@ -124,8 +124,13 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         }
         if (pMap[two2one(newpos[0], newpos[1])] == 1)  // if open path
         {
-            snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
-            forward(snake, snakeSize+1);  // continue moving
+            vector<int> newsnake(snakeSize+1);
+            for (p=0; p<snakeSize; p++) {
+                newsnake[p] = snake[p];  // copy to the longer snake
+            }
+            newsnake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
+            forward(newsnake, snakeSize+1);  // continue moving
+            newsnake.clear();
         }
         // elseif no open path: return
     }
