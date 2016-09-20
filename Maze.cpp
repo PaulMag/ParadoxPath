@@ -40,9 +40,9 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
     currentBestSnake[0] = two2one(Y1, X1);
     this->nOutBufferSize = nOutBufferSize;
 
-    vector<int> snake(1);
+    this->snake = new int[nOutBufferSize+1];
     snake[0] = two2one(Y1, X1);
-    forward(snake, 1);
+    forward(1);
 
     if (currentBest > nOutBufferSize + 1) {
         return -1;
@@ -74,14 +74,13 @@ int Maze:: one2y(int k)
 }
 
 
-void Maze:: forward(vector<int> snake, int snakeSize)
+void Maze:: forward(int snakeSize)
 {
     int p;
     for (p=0; p<snakeSize-1; p++) {
         if (snake[snakeSize-1] == snake[p]) {
             // Been here before.
             // cout << "been here before (" << snake[snakeSize-1] << ") \n";
-            snake.clear();  // must remove all the snake copies to not clog memory
             return;
         }
     }
@@ -91,13 +90,11 @@ void Maze:: forward(vector<int> snake, int snakeSize)
     if (bestPossibility >= currentBest) {
         // A better solution cannot be found anymore.
         // cout << "A better solution cannot be found anymore. \n";
-        snake.clear();
         return;
     }
     else if (bestPossibility > nOutBufferSize) {
         // Potential solution is too long.
         // cout << "Potential solution is too long. \n";
-        snake.clear();
         return;
     }
     else if (snake[snakeSize-1] == two2one(Y2, X2)) {
@@ -107,7 +104,6 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         for (p=0; p<snakeSize; p++) {
             currentBestSnake[p] = snake[p];
         }
-        snake.clear();
         return;
     }
 
@@ -124,18 +120,12 @@ void Maze:: forward(vector<int> snake, int snakeSize)
         }
         if (pMap[two2one(newpos[0], newpos[1])] == 1)  // if open path
         {
-            vector<int> newsnake(snakeSize+1);
-            for (p=0; p<snakeSize; p++) {
-                newsnake[p] = snake[p];  // copy to the longer snake
-            }
-            newsnake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
-            forward(newsnake, snakeSize+1);  // continue moving
-            newsnake.clear();
+            snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
+            forward(snakeSize+1);  // continue moving
         }
         // elseif no open path: return
     }
     directions.clear();
-    snake.clear();
     return;
 }
 
