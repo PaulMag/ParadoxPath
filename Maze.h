@@ -37,11 +37,10 @@ public:
 
     int solve(int*, int);
     void forward(int);
-    void forward_d(int, int);
     vector<vector<int>> setDirection(int);
     vector<vector<int>> setDirection(int, int);
-    bool worth_checking(int, int);
     void deadend();
+    void forward_d(int, int);
 };
 
 #endif
