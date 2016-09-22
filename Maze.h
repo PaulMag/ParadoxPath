@@ -16,6 +16,7 @@ public:
     const unsigned char* pMapC;
     const int nX, nY;
 
+    int* snake;
     int currentBest;
     int* currentBestSnake;
     int nOutBufferSize;
@@ -35,11 +36,11 @@ public:
     int one2y(int);
 
     int solve(int*, int);
-    void forward(vector<int>, int);
+    void forward(int);
     vector<vector<int>> setDirection(int);
     vector<vector<int>> setDirection(int, int);
-    bool worth_checking(int, int);
     void deadend();
+    void forward_d(int, int);
 };
 
 #endif
