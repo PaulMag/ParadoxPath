@@ -181,153 +181,58 @@ vector<vector<int>> Maze:: setDirection(int headX, int headY)
 }
 
 
-bool Maze:: worth_checking(int i, int j)
-{
-    if (pMap[two2one(i, j)] == 0) {return false;}
-    if (i == Y1 && j == X1) {return false;}
-    if (i == Y2 && j == X2) {return false;}
-    return true;
-}
-
-
 void Maze:: deadend()
 {
     int i, j;
-    int count;
-
-    bool deadend_exists = true;
-    while (deadend_exists) {
-        deadend_exists = false;
-
-        /* Check corners */
-
-        i = 0;
-        j = 0;
-        if (worth_checking(i, j)) {
-            count = 0;
-            if (pMap[two2one(i, j+1)] == 0) {count++;}
-            if (pMap[two2one(i+1, j)] == 0) {count++;}
-            if (count >= 1) {
-                pMap[two2one(i, j)] = 0;
-                deadend_exists = true;
+    for (i=0; i<nY; i++) {
+        for (j=0; j<nX; j++) {
+            if (pMap[two2one(i, j)] == 1) {  // Check if every open path
+                forward_d(i, j);             // is a deadend.
             }
         }
+    }
+}
 
-        j = nX - 1;
-        if (worth_checking(i, j)) {
-            count = 0;
-            if (pMap[two2one(i, j-1)] == 0) {count++;}
-            if (pMap[two2one(i+1, j)] == 0) {count++;}
-            if (count >= 1) {
-                pMap[two2one(i, j)] = 0;
-                deadend_exists = true;
-            }
-        }
 
-        i = nY - 1;
-        j = 0;
-        if (worth_checking(i, j)) {
-            count = 0;
-            if (pMap[two2one(i, j+1)] == 0) {count++;}
-            if (pMap[two2one(i-1, j)] == 0) {count++;}
-            if (count >= 1) {
-                pMap[two2one(i, j)] = 0;
-                deadend_exists = true;
-            }
-        }
+void Maze:: forward_d(int i, int j)
+{
+    int count = 0;
+    int newpos[2] = {};
 
-        j = nX - 1;
-        if (worth_checking(i, j)) {
-            count = 0;
-            if (pMap[two2one(i, j-1)] == 0) {count++;}
-            if (pMap[two2one(i-1, j)] == 0) {count++;}
-            if (count >= 1) {
-                pMap[two2one(i, j)] = 0;
-                deadend_exists = true;
-            }
-        }
+    if (j == 0) {count++;}  // edge
+    else if (pMap[two2one(i, j-1)] == 0) {count++;}  // wall
+    else {
+        newpos[0] = i;    // open path
+        newpos[1] = j-1;
+    }
 
-        /* Check borders */
+    if (j == nX-1) {count++;}
+    else if (pMap[two2one(i, j+1)] == 0) {count++;}
+    else {
+        newpos[0] = i;
+        newpos[1] = j+1;
+    }
 
-        i = 0;
-        for (j=1; j<nX-1; j++) {
-            if (worth_checking(i, j)) {
-                count = 0;
-                if (pMap[two2one(i, j-1)] == 0) {count++;}
-                if (pMap[two2one(i, j+1)] == 0) {count++;}
-                if (pMap[two2one(i+1, j)] == 0) {count++;}
-                if (count >= 2) {
-                    pMap[two2one(i, j)] = 0;
-                    deadend_exists = true;
-                }
-            }
-        }
+    if (i == 0) {count++;}
+    else if (pMap[two2one(i-1, j)] == 0) {count++;}
+    else {
+        newpos[0] = i-1;
+        newpos[1] = j;
+    }
 
-        i = nY-1;
-        for (j=1; j<nX-1; j++) {
-            if (worth_checking(i, j)) {
-                count = 0;
-                if (pMap[two2one(i, j-1)] == 0) {count++;}
-                if (pMap[two2one(i, j+1)] == 0) {count++;}
-                if (pMap[two2one(i-1, j)] == 0) {count++;}
-                if (count >= 2) {
-                    pMap[two2one(i, j)] = 0;
-                    deadend_exists = true;
-                }
-            }
-        }
+    if (i == nY-1) {count++;}
+    else if (pMap[two2one(i+1, j)] == 0) {count++;}
+    else {
+        newpos[0] = i+1;
+        newpos[1] = j;
+    }
 
-        j = 0;
-        for (i=1; i<nY-1; i++) {
-            if (worth_checking(i, j)) {
-                count = 0;
-                if (pMap[two2one(i, j+1)] == 0) {count++;}
-                if (pMap[two2one(i-1, j)] == 0) {count++;}
-                if (pMap[two2one(i+1, j)] == 0) {count++;}
-                if (count >= 2) {
-                    pMap[two2one(i, j)] = 0;
-                    deadend_exists = true;
-                }
-            }
-        }
-
-        j = nX-1;
-        for (i=1; i<nY-1; i++) {
-            if (worth_checking(i, j)) {
-                count = 0;
-                if (pMap[two2one(i, j-1)] == 0) {count++;}
-                if (pMap[two2one(i-1, j)] == 0) {count++;}
-                if (pMap[two2one(i+1, j)] == 0) {count++;}
-                if (count >= 2) {
-                    pMap[two2one(i, j)] = 0;
-                    deadend_exists = true;
-                }
-            }
-        }
-
-        /* Check interior */
-
-        for (i=1; i<nY-1; i++) {
-            for (j=1; j<nX-1; j++) {
-                if (! worth_checking(i, j)) {
-                    continue;
-                }
-                count = 0;
-                if (pMap[two2one(i, j-1)] == 0) {count++;}
-                if (pMap[two2one(i, j+1)] == 0) {count++;}
-                if (pMap[two2one(i-1, j)] == 0) {count++;}
-                if (pMap[two2one(i+1, j)] == 0) {count++;}
-                if (count >= 3) {
-                    /* There are 3 or more walls around this point, so it
-                     * must be a dead end. Fill it in.
-                     */
-                    pMap[two2one(i, j)] = 0;
-                    deadend_exists = true;
-                    /* If not a single deadend was found the iteration will
-                     * stop.
-                     */
-                }
-            }
+    if (count >= 3) {  // At least 3 walls or edges => deadend
+        if (i == Y1 && j == X1) {return;}  // But not if it is the start
+        if (i == Y2 && j == X2) {return;}  // or goal.
+        pMap[two2one(i, j)] = 0;  // Close this deadend.
+        if (count == 3) {       // If there was an open path
+            forward_d(newpos[0], newpos[1]);  // check if that is also a deadend.
         }
     }
 }
