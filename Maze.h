@@ -16,10 +16,15 @@ public:
     const unsigned char* pMapC;
     const int nX, nY;
 
+    int* hScores;
+    int* gScores;
+    // int* fScores;
+
     int* snake;
     int currentBest;
     int* currentBestSnake;
     int nOutBufferSize;
+    vector<vector<int>> directions;
 
     int* dir1, dir2;
 
@@ -35,6 +40,7 @@ public:
     int one2x(int);
     int one2y(int);
 
+    void initializeScores();
     int solve(int*, int);
     void forward(int);
     vector<vector<int>> setDirection(int);

@@ -33,6 +33,23 @@ Maze:: Maze(
 Maze:: ~Maze() {}
 
 
+void Maze:: initializeScores()
+{
+    hScores = new int[nY*nX];
+    gScores = new int[nY*nX];
+    // fScores = new int[nY*nX];
+    gScores[0] = nY*nX;
+
+    for (int i=0; i<nY; i++) {
+        for (int j=0; j<nX; j++) {
+            hScores[i*nX+j] = abs(Y2 - i) + abs(X2 - j);
+            gScores[i*nX+j] = gScores[0];
+            // fScores[i*nX+j] = gScores[0] + hScores[i*nX+j];
+        }
+    }
+}
+
+
 int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
 {
     this->currentBest = nOutBufferSize + 2;
@@ -41,7 +58,9 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
     this->nOutBufferSize = nOutBufferSize;
 
     this->snake = new int[nOutBufferSize+1];
+    initializeScores();
     snake[0] = two2one(Y1, X1);
+    this->directions = setDirection(Y1, X1);
     forward(1);
 
     if (currentBest > nOutBufferSize + 1) {
@@ -76,38 +95,26 @@ int Maze:: one2y(int k)
 
 void Maze:: forward(int snakeSize)
 {
-    int p;
-    for (p=0; p<snakeSize-1; p++) {
-        if (snake[snakeSize-1] == snake[p]) {
-            // Been here before.
-            // cout << "been here before (" << snake[snakeSize-1] << ") \n";
-            return;
-        }
-    }
-    int bestPossibility = snakeSize +
-                          abs(X2 - one2x(snake[snakeSize-1])) +
-                          abs(Y2 - one2y(snake[snakeSize-1]));
-    if (bestPossibility >= currentBest) {
-        // A better solution cannot be found anymore.
-        // cout << "A better solution cannot be found anymore. \n";
+    if (gScores[snake[snakeSize-1]] <= snakeSize) {
         return;
     }
-    else if (bestPossibility > nOutBufferSize) {
-        // Potential solution is too long.
-        // cout << "Potential solution is too long. \n";
+    else {
+        gScores[snake[snakeSize-1]] = snakeSize;
+        // fScores[snake[snakeSize-1]] = snakeSize + hScores[snake[snakeSize-1]];
+    }
+    if (snakeSize + hScores[snake[snakeSize-1]] > nOutBufferSize) {
         return;
     }
     else if (snake[snakeSize-1] == two2one(Y2, X2)) {
         // Victory!
         // cout << "Victory! \n";
         currentBest = snakeSize;
-        for (p=0; p<snakeSize; p++) {
+        for (int p=0; p<snakeSize; p++) {
             currentBestSnake[p] = snake[p];
         }
         return;
     }
 
-    vector<vector<int>> directions = setDirection(currentBestSnake[0]);
     int e;
     int newpos[2] = {};
     for (e=0; e<4; e++)
@@ -125,7 +132,6 @@ void Maze:: forward(int snakeSize)
         }
         // elseif no open path: return
     }
-    directions.clear();
     return;
 }
 
