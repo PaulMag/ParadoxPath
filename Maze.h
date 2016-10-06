@@ -2,6 +2,7 @@
 using namespace std;
 #include <cmath>
 #include <vector>
+#include <algorithm>
 
 #ifndef MAZE_H
 #define MAZE_H
@@ -18,7 +19,12 @@ public:
 
     int* hScores;
     int* gScores;
-    // int* fScores;
+    int* fScores;
+    vector<int> priority;
+    vector<int> priority_temp;
+    vector<int> priorityF;
+    vector<int> priorityF_temp;
+    int priorityN;
 
     int* snake;
     int currentBest;
@@ -42,7 +48,8 @@ public:
 
     void initializeScores();
     int solve(int*, int);
-    void forward(int);
+    vector<int> sort(vector<int>);
+    void explodeFirst();
     vector<vector<int>> setDirection(int);
     vector<vector<int>> setDirection(int, int);
     void deadend();

@@ -2,6 +2,8 @@
 using namespace std;
 #include <cmath>
 #include <vector>
+#include <algorithm>
+
 
 #include "Maze.h"
 
@@ -37,16 +39,31 @@ void Maze:: initializeScores()
 {
     hScores = new int[nY*nX];
     gScores = new int[nY*nX];
-    // fScores = new int[nY*nX];
+    fScores = new int[nY*nX];
     gScores[0] = nY*nX;
 
     for (int i=0; i<nY; i++) {
         for (int j=0; j<nX; j++) {
             hScores[i*nX+j] = abs(Y2 - i) + abs(X2 - j);
             gScores[i*nX+j] = gScores[0];
-            // fScores[i*nX+j] = gScores[0] + hScores[i*nX+j];
+            fScores[i*nX+j] = gScores[0] + hScores[i*nX+j];
         }
     }
+
+
+    vector<int> temp1(nY*nX/2);
+    vector<int> temp2(nY*nX/2);
+    vector<int> temp3(nY*nX/2);
+    vector<int> temp4(nY*nX/2);
+    priority = temp1;
+    priority_temp = temp2;;
+    priority[0] = two2one(Y1, X1);
+    priorityN = 1;
+    priorityF = temp3;
+    priorityF_temp = temp4;
+    priorityF[0] = 0;
+    gScores[priority[0]] = 0;
+    fScores[priority[0]] = hScores[priority[0]];
 }
 
 
@@ -61,7 +78,19 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
     initializeScores();
     snake[0] = two2one(Y1, X1);
     this->directions = setDirection(Y1, X1);
-    forward(1);
+
+    while (priorityN > 0) {
+        explodeFirst();
+        vector<int> idx = sort(priorityF);
+        for (int p=0; p<priorityN; p++) {
+            priority_temp[p]  = priority[p];
+            priorityF_temp[p] = priorityF[p];
+        }
+        for (int p=0; p<priorityN; p++) {
+            priority[p]  = priority_temp[idx[p]];
+            priorityF[p] = priorityF_temp[idx[p]];
+        }
+    }
 
     if (currentBest > nOutBufferSize + 1) {
         return -1;
@@ -93,45 +122,64 @@ int Maze:: one2y(int k)
 }
 
 
-void Maze:: forward(int snakeSize)
+vector<int> Maze:: sort(vector<int> data)
 {
-    if (gScores[snake[snakeSize-1]] <= snakeSize) {
-        return;
+    std::vector<int> idx(data.size());
+    std::size_t n(0);
+    std::generate(std::begin(idx), std::end(idx), [&]{ return n++; });
+
+    std::sort(  std::begin(idx),
+                std::end(idx),
+                [&](int i1, int i2) { return data[i1] < data[i2]; } );
+    return idx;
+}
+
+
+void Maze:: explodeFirst()
+{
+    int pos = priority[0];
+    for (int p=0; p<priorityN-1; p++) {
+        priority[p]  = priority[p+1];
+        priorityF[p] = priorityF[p+1];
     }
-    else {
-        gScores[snake[snakeSize-1]] = snakeSize;
-        // fScores[snake[snakeSize-1]] = snakeSize + hScores[snake[snakeSize-1]];
+    priorityN--;
+
+    if (priorityF[pos] > nOutBufferSize) {
+        return;  // No solution can be found from this location.
     }
-    if (snakeSize + hScores[snake[snakeSize-1]] > nOutBufferSize) {
-        return;
-    }
-    else if (snake[snakeSize-1] == two2one(Y2, X2)) {
+    else if (pos == two2one(Y2, X2)) {
         // Victory!
         // cout << "Victory! \n";
-        currentBest = snakeSize;
-        for (int p=0; p<snakeSize; p++) {
-            currentBestSnake[p] = snake[p];
-        }
-        return;
+        currentBest = gScores[pos];
+        // for (int p=0; p<snakeSize; p++) {
+            // currentBestSnake[p] = snake[p];
+        // }
+        // return;
     }
 
-    int e;
     int newpos[2] = {};
-    for (e=0; e<4; e++)
+    for (int e=0; e<4; e++)
     {
-        newpos[0] = one2y(snake[snakeSize-1]) + directions[e][0];
-        newpos[1] = one2x(snake[snakeSize-1]) + directions[e][1];
+        newpos[0] = one2y(pos) + directions[e][0];
+        newpos[1] = one2x(pos) + directions[e][1];
         if (newpos[0] < 0 or newpos[1] < 0 or newpos[0] >= nY or newpos[1] >= nX)
         {
-            continue;  // out of bounds, skip forward
+            continue;  // out of bounds
         }
-        if (pMap[two2one(newpos[0], newpos[1])] == 1)  // if open path
+        else if (pMap[two2one(newpos[0], newpos[1])] == 0)
         {
-            snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
-            forward(snakeSize+1);  // continue moving
+            continue;  // closed path
         }
-        // elseif no open path: return
+        else if (gScores[two2one(newpos[0], newpos[1])] > gScores[pos]+1) {
+            priority[priorityN]  = two2one(newpos[0], newpos[1]);
+            gScores[priority[priorityN]] = gScores[pos] + 1;
+            fScores[priority[priorityN]] = gScores[priority[priorityN]] + hScores[priority[priorityN]];
+            priorityF[priorityN] = fScores[priority[priorityN]];
+            priorityN++;
+        }
+        // else: Better path already found to this location.
     }
+
     return;
 }
 
