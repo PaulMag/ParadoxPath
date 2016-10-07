@@ -26,9 +26,7 @@ public:
     vector<int> priorityF_temp;
     int priorityN;
 
-    int* snake;
     int currentBest;
-    int* currentBestSnake;
     int nOutBufferSize;
     vector<vector<int>> directions;
 

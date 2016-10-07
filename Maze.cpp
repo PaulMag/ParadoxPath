@@ -50,35 +50,22 @@ void Maze:: initializeScores()
         }
     }
 
-
-    vector<int> temp1(nY*nX/2);
-    vector<int> temp2(nY*nX/2);
-    vector<int> temp3(nY*nX/2);
-    vector<int> temp4(nY*nX/2);
-    // priority = temp1;
-    priority_temp = temp2;;
-    // priority[0] = two2one(Y1, X1);
     priority.push_back(two2one(Y1, X1));
     priorityN = 1;
-    // priorityF = temp3;
-    priorityF_temp = temp4;
     gScores[priority[0]] = 0;
     fScores[priority[0]] = hScores[priority[0]];
-    // priorityF[0] = fScores[priority[0]];
     priorityF.push_back(fScores[priority[0]]);
+
+    priority_temp.reserve(nY*nX/2);
+    priorityF_temp.reserve(nY*nX/2);
 }
 
 
 int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
 {
-    this->currentBest = nOutBufferSize + 2;
-    this->currentBestSnake = new int[nOutBufferSize+1];
-    currentBestSnake[0] = two2one(Y1, X1);
+    this->currentBest = nOutBufferSize + 1;
     this->nOutBufferSize = nOutBufferSize;
-
-    this->snake = new int[nOutBufferSize+1];
     initializeScores();
-    snake[0] = two2one(Y1, X1);
     this->directions = setDirection(Y1, X1);
 
     while (priorityN > 0) {
@@ -94,16 +81,15 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
         }
     }
 
-    if (currentBest > nOutBufferSize + 1) {
+    if (currentBest > nOutBufferSize) {
         return -1;
     }
     else {
         int p;
-        for (p=0; p<currentBest-1; p++) {
-            // Do not count start position.
-            pOutBuffer[p] = currentBestSnake[p+1];
+        for (p=0; p<currentBest; p++) {
+            // pOutBuffer[p] = TODO;
         }
-        return currentBest-1;
+        return currentBest;
     }
 }
 
@@ -149,12 +135,8 @@ void Maze:: explodeFirst()
     }
     else if (pos == two2one(Y2, X2)) {
         // Victory!
-        // cout << "Victory! \n";
         currentBest = gScores[pos];
-        // for (int p=0; p<snakeSize; p++) {
-            // currentBestSnake[p] = snake[p];
-        // }
-        // return;
+        return;  // No need to explode from goal.
     }
 
     int newpos[2] = {};
