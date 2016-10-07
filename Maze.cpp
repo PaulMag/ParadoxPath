@@ -55,15 +55,17 @@ void Maze:: initializeScores()
     vector<int> temp2(nY*nX/2);
     vector<int> temp3(nY*nX/2);
     vector<int> temp4(nY*nX/2);
-    priority = temp1;
+    // priority = temp1;
     priority_temp = temp2;;
-    priority[0] = two2one(Y1, X1);
+    // priority[0] = two2one(Y1, X1);
+    priority.push_back(two2one(Y1, X1));
     priorityN = 1;
-    priorityF = temp3;
+    // priorityF = temp3;
     priorityF_temp = temp4;
-    priorityF[0] = 0;
     gScores[priority[0]] = 0;
     fScores[priority[0]] = hScores[priority[0]];
+    // priorityF[0] = fScores[priority[0]];
+    priorityF.push_back(fScores[priority[0]]);
 }
 
 
@@ -138,13 +140,11 @@ vector<int> Maze:: sort(vector<int> data)
 void Maze:: explodeFirst()
 {
     int pos = priority[0];
-    for (int p=0; p<priorityN-1; p++) {
-        priority[p]  = priority[p+1];
-        priorityF[p] = priorityF[p+1];
-    }
+    priority.erase(priority.begin());
+    priorityF.erase(priorityF.begin());
     priorityN--;
 
-    if (priorityF[pos] > nOutBufferSize) {
+    if (priorityF[0] > nOutBufferSize) {
         return;  // No solution can be found from this location.
     }
     else if (pos == two2one(Y2, X2)) {
@@ -171,10 +171,10 @@ void Maze:: explodeFirst()
             continue;  // closed path
         }
         else if (gScores[two2one(newpos[0], newpos[1])] > gScores[pos]+1) {
-            priority[priorityN]  = two2one(newpos[0], newpos[1]);
+            priority.push_back(two2one(newpos[0], newpos[1]));
             gScores[priority[priorityN]] = gScores[pos] + 1;
             fScores[priority[priorityN]] = gScores[priority[priorityN]] + hScores[priority[priorityN]];
-            priorityF[priorityN] = fScores[priority[priorityN]];
+            priorityF.push_back(fScores[priority[priorityN]]);
             priorityN++;
         }
         // else: Better path already found to this location.
