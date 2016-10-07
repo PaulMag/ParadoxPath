@@ -37,6 +37,7 @@ Maze:: ~Maze() {}
 
 void Maze:: initializeScores()
 {
+    previousMap = new int[nY*nX];
     hScores = new int[nY*nX];
     gScores = new int[nY*nX];
     fScores = new int[nY*nX];
@@ -85,9 +86,9 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
         return -1;
     }
     else {
-        int p;
-        for (p=0; p<currentBest; p++) {
-            // pOutBuffer[p] = TODO;
+        pOutBuffer[currentBest-1] = two2one(Y2, X2);
+        for (int p=currentBest-1; p>0; p--) {
+            pOutBuffer[p-1] = previousMap[pOutBuffer[p]];
         }
         return currentBest;
     }
@@ -154,6 +155,7 @@ void Maze:: explodeFirst()
         }
         else if (gScores[two2one(newpos[0], newpos[1])] > gScores[pos]+1) {
             priority.push_back(two2one(newpos[0], newpos[1]));
+            previousMap[priority[priorityN]] = pos;
             gScores[priority[priorityN]] = gScores[pos] + 1;
             fScores[priority[priorityN]] = gScores[priority[priorityN]] + hScores[priority[priorityN]];
             priorityF.push_back(fScores[priority[priorityN]]);

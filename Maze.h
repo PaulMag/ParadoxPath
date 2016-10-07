@@ -17,6 +17,7 @@ public:
     const unsigned char* pMapC;
     const int nX, nY;
 
+    int* previousMap;
     int* hScores;
     int* gScores;
     int* fScores;
