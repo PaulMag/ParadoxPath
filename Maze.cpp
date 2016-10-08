@@ -80,6 +80,9 @@ int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
             priority[p]  = priority_temp[idx[p]];
             priorityF[p] = priorityF_temp[idx[p]];
         }
+        if (priorityF[0] >= currentBest or priorityF[0] > nOutBufferSize) {
+            break;  // No better solution can exist anymore.
+        }
     }
 
     if (currentBest > nOutBufferSize) {
@@ -131,10 +134,7 @@ void Maze:: explodeFirst()
     priorityF.erase(priorityF.begin());
     priorityN--;
 
-    if (priorityF[0] > nOutBufferSize) {
-        return;  // No solution can be found from this location.
-    }
-    else if (pos == two2one(Y2, X2)) {
+    if (pos == two2one(Y2, X2)) {
         // Victory!
         currentBest = gScores[pos];
         return;  // No need to explode from goal.
