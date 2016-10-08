@@ -2,6 +2,8 @@
 using namespace std;
 #include <cmath>
 #include <vector>
+#include <algorithm>
+
 
 #include "Maze.h"
 
@@ -33,27 +35,65 @@ Maze:: Maze(
 Maze:: ~Maze() {}
 
 
+void Maze:: initializeScores()
+{
+    previousMap = new int[nY*nX];
+    hScores = new int[nY*nX];
+    gScores = new int[nY*nX];
+    fScores = new int[nY*nX];
+    gScores[0] = nY*nX;
+
+    for (int i=0; i<nY; i++) {
+        for (int j=0; j<nX; j++) {
+            hScores[i*nX+j] = abs(Y2 - i) + abs(X2 - j);
+            gScores[i*nX+j] = gScores[0];
+            fScores[i*nX+j] = gScores[0] + hScores[i*nX+j];
+        }
+    }
+
+    priority.push_back(two2one(Y1, X1));
+    priorityN = 1;
+    gScores[priority[0]] = 0;
+    fScores[priority[0]] = hScores[priority[0]];
+    priorityF.push_back(fScores[priority[0]]);
+
+    priority_temp.reserve(nY*nX/2);
+    priorityF_temp.reserve(nY*nX/2);
+}
+
+
 int Maze:: solve(int* pOutBuffer, int nOutBufferSize)
 {
-    this->currentBest = nOutBufferSize + 2;
-    this->currentBestSnake = new int[nOutBufferSize+1];
-    currentBestSnake[0] = two2one(Y1, X1);
+    this->currentBest = nOutBufferSize + 1;
     this->nOutBufferSize = nOutBufferSize;
+    initializeScores();
+    this->directions = setDirection(Y1, X1);
 
-    this->snake = new int[nOutBufferSize+1];
-    snake[0] = two2one(Y1, X1);
-    forward(1);
+    while (priorityN > 0) {
+        explodeFirst();
+        vector<int> idx = sort(priorityF);
+        for (int p=0; p<priorityN; p++) {
+            priority_temp[p]  = priority[p];
+            priorityF_temp[p] = priorityF[p];
+        }
+        for (int p=0; p<priorityN; p++) {
+            priority[p]  = priority_temp[idx[p]];
+            priorityF[p] = priorityF_temp[idx[p]];
+        }
+        if (priorityF[0] >= currentBest or priorityF[0] > nOutBufferSize) {
+            break;  // No better solution can exist anymore.
+        }
+    }
 
-    if (currentBest > nOutBufferSize + 1) {
+    if (currentBest > nOutBufferSize) {
         return -1;
     }
     else {
-        int p;
-        for (p=0; p<currentBest-1; p++) {
-            // Do not count start position.
-            pOutBuffer[p] = currentBestSnake[p+1];
+        pOutBuffer[currentBest-1] = two2one(Y2, X2);
+        for (int p=currentBest-1; p>0; p--) {
+            pOutBuffer[p-1] = previousMap[pOutBuffer[p]];
         }
-        return currentBest-1;
+        return currentBest;
     }
 }
 
@@ -74,58 +114,56 @@ int Maze:: one2y(int k)
 }
 
 
-void Maze:: forward(int snakeSize)
+vector<int> Maze:: sort(vector<int> data)
 {
-    int p;
-    for (p=0; p<snakeSize-1; p++) {
-        if (snake[snakeSize-1] == snake[p]) {
-            // Been here before.
-            // cout << "been here before (" << snake[snakeSize-1] << ") \n";
-            return;
-        }
-    }
-    int bestPossibility = snakeSize +
-                          abs(X2 - one2x(snake[snakeSize-1])) +
-                          abs(Y2 - one2y(snake[snakeSize-1]));
-    if (bestPossibility >= currentBest) {
-        // A better solution cannot be found anymore.
-        // cout << "A better solution cannot be found anymore. \n";
-        return;
-    }
-    else if (bestPossibility > nOutBufferSize) {
-        // Potential solution is too long.
-        // cout << "Potential solution is too long. \n";
-        return;
-    }
-    else if (snake[snakeSize-1] == two2one(Y2, X2)) {
+    std::vector<int> idx(data.size());
+    std::size_t n(0);
+    std::generate(std::begin(idx), std::end(idx), [&]{ return n++; });
+
+    std::sort(  std::begin(idx),
+                std::end(idx),
+                [&](int i1, int i2) { return data[i1] < data[i2]; } );
+    return idx;
+}
+
+
+void Maze:: explodeFirst()
+{
+    int pos = priority[0];
+    priority.erase(priority.begin());
+    priorityF.erase(priorityF.begin());
+    priorityN--;
+
+    if (pos == two2one(Y2, X2)) {
         // Victory!
-        // cout << "Victory! \n";
-        currentBest = snakeSize;
-        for (p=0; p<snakeSize; p++) {
-            currentBestSnake[p] = snake[p];
-        }
-        return;
+        currentBest = gScores[pos];
+        return;  // No need to explode from goal.
     }
 
-    vector<vector<int>> directions = setDirection(currentBestSnake[0]);
-    int e;
     int newpos[2] = {};
-    for (e=0; e<4; e++)
+    for (int e=0; e<4; e++)
     {
-        newpos[0] = one2y(snake[snakeSize-1]) + directions[e][0];
-        newpos[1] = one2x(snake[snakeSize-1]) + directions[e][1];
+        newpos[0] = one2y(pos) + directions[e][0];
+        newpos[1] = one2x(pos) + directions[e][1];
         if (newpos[0] < 0 or newpos[1] < 0 or newpos[0] >= nY or newpos[1] >= nX)
         {
-            continue;  // out of bounds, skip forward
+            continue;  // out of bounds
         }
-        if (pMap[two2one(newpos[0], newpos[1])] == 1)  // if open path
+        else if (pMap[two2one(newpos[0], newpos[1])] == 0)
         {
-            snake[snakeSize] = two2one(newpos[0], newpos[1]);  // new head
-            forward(snakeSize+1);  // continue moving
+            continue;  // closed path
         }
-        // elseif no open path: return
+        else if (gScores[two2one(newpos[0], newpos[1])] > gScores[pos]+1) {
+            priority.push_back(two2one(newpos[0], newpos[1]));
+            previousMap[priority[priorityN]] = pos;
+            gScores[priority[priorityN]] = gScores[pos] + 1;
+            fScores[priority[priorityN]] = gScores[priority[priorityN]] + hScores[priority[priorityN]];
+            priorityF.push_back(fScores[priority[priorityN]]);
+            priorityN++;
+        }
+        // else: Better path already found to this location.
     }
-    directions.clear();
+
     return;
 }
 
